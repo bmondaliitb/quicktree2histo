@@ -1,0 +1,58 @@
+input: "outTree.root"
+
+friends:
+  # optional, attach friend trees (same file or different files)
+  - {tree: "treeAnaWZ", alias: "C"}     # if in same file
+  # - {tree: "Other.root:Aux", alias: "A"}  # file:path syntax also supported (see code)
+
+outputs:
+  - file: "output.root"
+    #compression: "LZ4:4"            # optional ROOT compression (algo:level)
+    selections:
+      - tree: "treeAnaWZ"              # can be "dir/subdir/Events"
+        filter: "mu_pt.size() > 0"      # keep events with at least one muon
+        #weight: "genWeight"         # optional weight expression; defaults to "1.0"
+        dir: "muons"                # optional subdirectory in output file
+
+        hists:
+          # --- 1D fixed bins ---
+          - name: "mu_pt"
+            title: "Leading muon p_{T};p_{T} [GeV];Events"
+            kind: "H1"
+            x: {expr: "mu_pt[0]/1000.0", bins: 50, min: 0, max: 200}
+
+          # --- 1D variable bins ---
+          - name: "mu_eta"
+            title: "Leading muon #eta;#eta;Events"
+            kind: "H1"
+            x: {expr: "mu_eta[0]", edges: [-2.4, -2.1, -1.2, 0, 1.2, 2.1, 2.4]}
+
+          - name: "u_pt_0"
+            title: "u_pt;u_pt [GeV];Events"
+            kind: "H1"
+            x: {expr: "u_pt.second[0]/1000.0", bins: 50, min: 0, max: 200}
+          - name: "u_pt_1"
+            title: "u_pt;u_pt [GeV];Events"
+            kind: "H1"
+            x: {expr: "u_pt.second[1]/1000.0", bins: 50, min: 0, max: 200}
+          - name: "u_pt_2"
+            title: "u_pt;u_pt [GeV];Events"
+            kind: "H1"
+            x: {expr: "u_pt.second[2]/1000.0", bins: 50, min: 0, max: 200}
+
+
+          ## --- 2D example ---
+          #- name: "mu_pt_vs_met"
+          #  title: "Muon p_{T} vs MET;Muon p_{T} [GeV];MET [GeV]"
+          #  kind: "H2"
+          #  x: {expr: "Muon_pt[0]", bins: 40, min: 0, max: 200}
+          #  y: {expr: "MET_pt",     bins: 40, min: 0, max: 200}
+
+          ## --- Profile (TProfile) ---
+          #- name: "jet_mult_vs_met"
+          #  title: "Jet multiplicity vs MET;MET [GeV];<N_{jets}>"
+          #  kind: "P1"
+          #  x: {expr: "MET_pt", bins: 50, min: 0, max: 250}
+          #  y: {expr: "nJet"}   # for profiles: y is the profiled quantity
+
+      # You can add more selections (different trees/filters/dirs) here
