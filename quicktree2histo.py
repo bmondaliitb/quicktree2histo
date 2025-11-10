@@ -121,6 +121,15 @@ def main(cfg_path):
                     tree.AddFriend(fr_tt)
 
             rdf = ROOT.RDataFrame(tree)
+
+            # optional per-selection named defines from YAML
+            for d in sel.get("defines", []):
+                nm = d.get("name")
+                ex = d.get("expr")
+                if not nm or not ex:
+                    raise ValueError("Each define must have 'name' and 'expr'")
+                rdf = rdf.Define(nm, ex)
+
             
             # --- DEBUG: inspect tree / RDF to find why histos are empty ---
             print(f"[DEBUG] TTree='{tree.GetName()}', TTree.GetEntries()={tree.GetEntries()}")
