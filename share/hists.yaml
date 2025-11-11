@@ -60,10 +60,29 @@ outputs:
         dir: "muons"                # optional subdirectory in output file
 
         defines:
+          - name: "mu_mass"
+            expr: "0.105658"
+          - name: "mu0"
+            expr: "ROOT::Math::PtEtaPhiMVector(mu_pt[0], mu_eta[0], mu_phi[0], mu_mass)"
+          - name: "mu1"
+            expr: "ROOT::Math::PtEtaPhiMVector(mu_pt[1], mu_eta[1], mu_phi[1], mu_mass)"
+          - name: "z_vec"
+            expr: "(mu0 + mu1)"
+          - name: "z_xy"
+            expr: "ROOT::Math::XYZVector(z_vec.Px(), z_vec.Py(), 0.0)"
+          - name: "u_xy_20"
+            expr: "ROOT::Math::XYZVector(u_pt.second[20]*std::cos(u_phi.second[20]), u_pt.second[20]*std::sin(u_phi.second[20]), 0.0)"
+          - name: "u_perp_20"
+            expr: "z_xy.Cross(u_xy_20).Z()/std::max(z_xy.Rho(), 1e-9)"
+          - name: "u_xy_22"
+            expr: "ROOT::Math::XYZVector(u_pt.second[22]*std::cos(u_phi.second[22]), u_pt.second[22]*std::sin(u_phi.second[22]), 0.0)"
+          - name: "u_perp_22"
+            expr: "z_xy.Cross(u_xy_22).Z()/std::max(z_xy.Rho(), 1e-9)"
           - name: "m_ll"
-            expr: "sqrt(2*mu_pt[0]*mu_pt[1]*(cosh(mu_eta[0]-mu_eta[1]) - cos(mu_phi[0]-mu_phi[1])))/1000.0"
+            expr: "z_vec.M()/1000.0"
           - name: "z_pt"
-            expr: "sqrt(mu_pt[0]*mu_pt[0] + mu_pt[1]*mu_pt[1] + 2*mu_pt[0]*mu_pt[1]*cos(mu_phi[0]-mu_phi[1]))/1000.0"
+            expr: "z_vec.Pt()/1000.0"
+
 
         hists:
           # --- 1D fixed bins ---
@@ -189,6 +208,23 @@ outputs:
             title: "Di-muon mass; m_{ll} [GeV];Events"
             kind: "H1"
             x: {expr: "m_ll", bins: 60, min: 0, max: 200}
+
+          - name: "z_pt"
+            title: "Z boson p_{T}; p_{T} [GeV];Events"
+            kind: "H1"
+            x: {expr: "z_pt", bins: 60, min: 0, max: 200}
+
+          - name: "u_perp_20"
+            title: "u_{#perp} (pfo (medium));u_{#perp} [GeV];Events"
+            kind: "H1"
+            x: {expr: "u_perp_20/1000.0", bins: 200, min: -50, max: 50}
+
+          - name: "u_perp_22"
+            title: "u_{#perp} (pfoML (medium));u_{#perp} [GeV];Events"
+            kind: "H1"
+            x: {expr: "u_perp_22/1000.0", bins: 200, min: -50, max: 50}
+
+
 
           ## --- 2D example ---
           #- name: "mu_pt_vs_met"
