@@ -1,3 +1,48 @@
+##### recoil histogram maps
+## pfo
+## LC
+## EM
+## pfoEM
+## pfoEMCentral
+## pfoEMForward
+## pfoCharged
+## pfoNeutral
+## pfoNeutralEM
+## pfoNeutralEMCentral
+##  pfoNeutralEMForward
+##  pfoML 				--> cPFO + nPFO at ML scale  
+##  ML 				    --> clusters (nPFO) at ML scale |eta| < 2.5 + nPFO |eta| > 2.5 at EM scale
+##  pfoMLEMForward      --> cPFO + nPFO |eta| < 2.5 at ML scale + nPFO |eta| > 2.5 at EM scale (essentially same as 12)
+##  pfoMLCentralLCForward --> cPFO + nPFO |eta| < 2.5 at ML scale + nPFO |eta| > 2.5 at LC scale
+
+## updated
+
+##[0] SoftClus_ 95553.5078125
+##[1] SoftClus__0 19950.689453125
+##[2] SoftClus__el 19950.689453125
+##[3] SoftClus__elmu 19950.689453125
+##[4] SoftClus__elmujet 19950.689453125
+##[5] SoftClus_sumet_ 153345.671875
+##[6] SoftTrack_ 38035.9375
+##[7] SoftTrack_sumet_ 70118.9453125
+##[8] TSTMet_ 71675.875 --> TST  (Track-based Soft Term)
+##[9] el_loose_EM  59930.10546875
+##[10] el_loose_LC 94702.296875
+##[11] el_loose_ML 54480.421875
+##[12] el_loose_pfo 94039.7421875
+##[13] el_loose_pfoEM 94039.7421875
+##[14] el_loose_pfoML 88599.6875
+##[15] el_loose_pfoMLCentralLCForward 88599.6875
+##[16] el_loose_pfoMLEMForward 88599.6875
+##[17] el_medium_EM  59930.10546875
+##[18] el_medium_LC 94702.296875
+##[19] el_medium_ML 54480.421875
+##[20] el_medium_pfo 94039.7421875
+##[21] el_medium_pfoEM 94039.7421875
+##[22] el_medium_pfoML 88599.6875
+##[23] el_medium_pfoMLCentralLCForward 88599.6875
+##[24] el_medium_pfoMLEMForward 88599.6875
+
 input: "outTree.root"
 
 friends:
@@ -10,9 +55,15 @@ outputs:
     #compression: "LZ4:4"            # optional ROOT compression (algo:level)
     selections:
       - tree: "treeAnaWZ"              # can be "dir/subdir/Events"
-        filter: "mu_pt.size() > 0"      # keep events with at least one muon
+        filter: "mu_pt.size() > 1"      # keep events with at least one muon
         #weight: "genWeight"         # optional weight expression; defaults to "1.0"
         dir: "muons"                # optional subdirectory in output file
+
+        defines:
+          - name: "m_ll"
+            expr: "sqrt(2*mu_pt[0]*mu_pt[1]*(cosh(mu_eta[0]-mu_eta[1]) - cos(mu_phi[0]-mu_phi[1])))/1000.0"
+          - name: "z_pt"
+            expr: "sqrt(mu_pt[0]*mu_pt[0] + mu_pt[1]*mu_pt[1] + 2*mu_pt[0]*mu_pt[1]*cos(mu_phi[0]-mu_phi[1]))/1000.0"
 
         hists:
           # --- 1D fixed bins ---
@@ -27,19 +78,117 @@ outputs:
             kind: "H1"
             x: {expr: "mu_eta[0]", edges: [-2.4, -2.1, -1.2, 0, 1.2, 2.1, 2.4]}
 
-          - name: "u_pt_0"
-            title: "u_pt;u_pt [GeV];Events"
+          - name: "ut_pt_8"
+            title: "u_pt (TSTMet);u_pt [GeV];Events"
             kind: "H1"
-            x: {expr: "u_pt.second[0]/1000.0", bins: 50, min: 0, max: 200}
-          - name: "u_pt_1"
-            title: "u_pt;u_pt [GeV];Events"
-            kind: "H1"
-            x: {expr: "u_pt.second[1]/1000.0", bins: 50, min: 0, max: 200}
-          - name: "u_pt_2"
-            title: "u_pt;u_pt [GeV];Events"
-            kind: "H1"
-            x: {expr: "u_pt.second[2]/1000.0", bins: 50, min: 0, max: 200}
+            x: {expr: "u_pt.second[8]/1000.0", bins: 50, min: 0, max: 200}
 
+          - name: "ut_pt_9"
+            title: "u_pt (EM (loose));u_pt [GeV];Events"
+            kind: "H1"
+            x: {expr: "u_pt.second[9]/1000.0", bins: 50, min: 0, max: 200}
+
+          - name: "ut_pt_10"
+            title: "u_pt (LC (loose));u_pt [GeV];Events"
+            kind: "H1"
+            x: {expr: "u_pt.second[10]/1000.0", bins: 50, min: 0, max: 200}
+
+          - name: "ut_pt_11"
+            title: "u_pt (ML (loose));u_pt [GeV];Events"
+            kind: "H1"
+            x: {expr: "u_pt.second[11]/1000.0", bins: 50, min: 0, max: 200} 
+
+          - name: "ut_pt_12"
+            title: "u_pt (pfo (loose));u_pt [GeV];Events"
+            kind: "H1"
+            x: {expr: "u_pt.second[12]/1000.0", bins: 50, min: 0, max: 200}
+
+          - name: "ut_pt_13"
+            title: "u_pt (pfoEM (loose));u_pt [GeV];Events"
+            kind: "H1"
+            x: {expr: "u_pt.second[13]/1000.0", bins: 50, min: 0, max: 200} 
+
+          - name: "ut_pt_14"
+            title: "u_pt (pfoML (loose));u_pt [GeV];Events"
+            kind: "H1"
+            x: {expr: "u_pt.second[14]/1000.0", bins: 50, min: 0, max: 200}
+
+          - name: "ut_pt_15"
+            title: "u_pt (pfoMLCentralLCForward (loose));u_pt [GeV];Events"
+            kind: "H1"
+            x: {expr: "u_pt.second[15]/1000.0", bins: 50, min: 0, max: 200} 
+
+          - name: "ut_pt_16"
+            title: "u_pt (pfoMLEMForward (loose));u_pt [GeV];Events"
+            kind: "H1"
+            x: {expr: "u_pt.second[16]/1000.0", bins: 50, min: 0, max: 200}
+
+          ## --- medium ---
+          - name: "ut_pt_17"
+            title: "u_pt (EM (medium));u_pt [GeV];Events"
+            kind: "H1"
+            x: {expr: "u_pt.second[17]/1000.0", bins: 50, min: 0, max: 200}
+
+          - name: "ut_pt_18"
+            title: "u_pt (LC (medium));u_pt [GeV];Events"
+            kind: "H1"
+            x: {expr: "u_pt.second[18]/1000.0", bins: 50, min: 0, max: 200}
+
+          - name: "ut_pt_19"
+            title: "u_pt (ML (medium));u_pt [GeV];Events"
+            kind: "H1"
+            x: {expr: "u_pt.second[19]/1000.0", bins: 50, min: 0, max: 200} 
+
+          - name: "ut_pt_20"
+            title: "u_pt (pfo (medium));u_pt [GeV];Events"
+            kind: "H1"
+            x: {expr: "u_pt.second[20]/1000.0", bins: 50, min: 0, max: 200}
+
+          - name: "ut_pt_21"
+            title: "u_pt (pfoEM (medium));u_pt [GeV];Events"
+            kind: "H1"
+            x: {expr: "u_pt.second[21]/1000.0", bins: 50, min: 0, max: 200} 
+
+          - name: "ut_pt_22"
+            title: "u_pt (pfoML (medium));u_pt [GeV];Events"
+            kind: "H1"
+            x: {expr: "u_pt.second[22]/1000.0", bins: 50, min: 0, max: 200}
+
+          - name: "ut_pt_23"
+            title: "u_pt (pfoMLCentralLCForward (medium));u_pt [GeV];Events"
+            kind: "H1"
+            x: {expr: "u_pt.second[23]/1000.0", bins: 50, min: 0, max: 200} 
+
+          - name: "ut_pt_24"
+            title: "u_pt (pfoMLEMForward (medium));u_pt [GeV];Events"
+            kind: "H1"
+            x: {expr: "u_pt.second[24]/1000.0", bins: 50, min: 0, max: 200}
+
+          ## --- truth ---
+          - name: "ut_pt_0"
+            title: "u_pt (truth, nonInt);u_pt [GeV];Events"
+            kind: "H1"
+            x: {expr: "tu_pt.second[0]/1000.0", bins: 50, min: 0, max: 200}
+
+          - name: "ut_pt_1"
+            title: "u_pt (truth, Int);u_pt [GeV];Events"
+            kind: "H1"
+            x: {expr: "tu_pt.second[1]/1000.0", bins: 50, min: 0, max: 200}
+
+          - name: "ut_pt_2"
+            title: "u_pt (truth, IntOut);u_pt [GeV];Events"
+            kind: "H1"
+            x: {expr: "tu_pt.second[2]/1000.0", bins: 50, min: 0, max: 200}
+
+          - name: "ut_pt_3"
+            title: "u_pt (truth, Truth);u_pt [GeV];Events"
+            kind: "H1"
+            x: {expr: "tu_pt.second[3]/1000.0", bins: 50, min: 0, max: 200}
+
+          - name: "m_ll"
+            title: "Di-muon mass; m_{ll} [GeV];Events"
+            kind: "H1"
+            x: {expr: "m_ll", bins: 60, min: 0, max: 200}
 
           ## --- 2D example ---
           #- name: "mu_pt_vs_met"
