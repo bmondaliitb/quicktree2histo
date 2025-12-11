@@ -73,6 +73,7 @@ common_defines: &common_defines
     expr: "ROOT::Math::XYZVector(u_pt.second[21]*std::cos(u_phi.second[21]), u_pt.second[21]*std::sin(u_phi.second[21]), 0.0)"
   - name: "u_xy_22"
     expr: "ROOT::Math::XYZVector(u_pt.second[22]*std::cos(u_phi.second[22]), u_pt.second[22]*std::sin(u_phi.second[22]), 0.0)"
+  # u_perp for pfo, pfoEM and pfoML
   - name: "u_perp_20"
     expr: "z_xy.Cross(u_xy_20).Z()/std::max(z_xy.Rho(), 1e-9)"
   - name: "u_perp_21"
@@ -82,20 +83,120 @@ common_defines: &common_defines
   # u_perp from em, lcw and ml clusters
   - name: "u_xy_em"
     expr: "ROOT::Math::XYZVector(u_pt.second[17]*std::cos(u_phi.second[17]), u_pt.second[17]*std::sin(u_phi.second[17]), 0.0)"
-  - name: "u_perp_em"
-    expr: "z_xy.Cross(u_xy_em).Z()/std::max(z_xy.Rho(), 1e-9)"
   - name: "u_xy_lc"
     expr: "ROOT::Math::XYZVector(u_pt.second[18]*std::cos(u_phi.second[18]), u_pt.second[18]*std::sin(u_phi.second[18]), 0.0)"
-  - name: "u_perp_lc"
-    expr: "z_xy.Cross(u_xy_lc).Z()/std::max(z_xy.Rho(), 1e-9)"
   - name: "u_xy_ml"
     expr: "ROOT::Math::XYZVector(u_pt.second[19]*std::cos(u_phi.second[19]), u_pt.second[19]*std::sin(u_phi.second[19]), 0.0)"
+
+  - name: "u_perp_em"
+    expr: "z_xy.Cross(u_xy_em).Z()/std::max(z_xy.Rho(), 1e-9)"
+  - name: "u_perp_lc"
+    expr: "z_xy.Cross(u_xy_lc).Z()/std::max(z_xy.Rho(), 1e-9)"
   - name: "u_perp_ml"
     expr: "z_xy.Cross(u_xy_ml).Z()/std::max(z_xy.Rho(), 1e-9)"
 
-cluster_defines: &cluster_defines
-  - name: "cluster_eta"
-    expr: "fClusterEta"
+  # u_parallel for pfo, pfoEM and pfoML
+  - name: "u_parallel_20"
+    expr: "-(z_xy.Dot(u_xy_20))/std::max(z_xy.Rho(), 1e-9)"
+  - name: "u_parallel_21"
+    expr: "-(z_xy.Dot(u_xy_21))/std::max(z_xy.Rho(), 1e-9)"
+  - name: "u_parallel_22"
+    expr: "-(z_xy.Dot(u_xy_22))/std::max(z_xy.Rho(), 1e-9)"
+  # u_parallel from em, lcw and ml clusters
+  - name: "u_parallel_em"
+    expr: "-(z_xy.Dot(u_xy_em))/std::max(z_xy.Rho(), 1e-9)"
+  - name: "u_parallel_lc"
+    expr: "-(z_xy.Dot(u_xy_lc))/std::max(z_xy.Rho(), 1e-9)"
+  - name: "u_parallel_ml"
+    expr: "-(z_xy.Dot(u_xy_ml))/std::max(z_xy.Rho(), 1e-9)"
+
+
+  # (sumet - u_pt) for pfo, pfoEM and pfoML
+  - name: "sumet_minus_u_pt_20"
+    expr: "(u_sumet.second[20] - u_pt.second[20])"
+  - name: "sumet_minus_u_pt_21"
+    expr: "(u_sumet.second[21] - u_pt.second[21])"
+  - name: "sumet_minus_u_pt_22"
+    expr: "(u_sumet.second[22] - u_pt.second[22])"
+  # (sumet - u_pt) from em, lcw and ml clusters
+  - name: "sumet_minus_u_pt_em"
+    expr: "(u_sumet.second[17] - u_pt.second[17])"
+  - name: "sumet_minus_u_pt_lc"
+    expr: "(u_sumet.second[18] - u_pt.second[18])"
+  - name: "sumet_minus_u_pt_ml"
+    expr: "(u_sumet.second[19] - u_pt.second[19])"
+
+  # \delta phi (u_phi - z_phi) for pfo, pfoEM and pfoML
+  - name: "delta_phi_pfo_lc"
+    expr: "ROOT::Math::VectorUtil::DeltaPhi(ROOT::Math::PtEtaPhiMVector(0,0,mu0.Phi(),0)+ROOT::Math::PtEtaPhiMVector(0,0,mu1.Phi(),0), ROOT::Math::PtEtaPhiMVector(0,0,u_phi.second[20],0))"
+  - name: "delta_phi_pfo_em"
+    expr: "ROOT::Math::VectorUtil::DeltaPhi(ROOT::Math::PtEtaPhiMVector(0,0,mu0.Phi(),0)+ROOT::Math::PtEtaPhiMVector(0,0,mu1.Phi(),0), ROOT::Math::PtEtaPhiMVector(0,0,u_phi.second[21],0))"
+  - name: "delta_phi_pfo_ml"
+    expr: "ROOT::Math::VectorUtil::DeltaPhi(ROOT::Math::PtEtaPhiMVector(0,0,mu0.Phi(),0)+ROOT::Math::PtEtaPhiMVector(0,0,mu1.Phi(),0), ROOT::Math::PtEtaPhiMVector(0,0,u_phi.second[22],0))"
+
+  # \delta phi (u_phi - z_phi) from em, lcw and ml clusters
+  - name: "delta_phi_em"
+    expr: "ROOT::Math::VectorUtil::DeltaPhi(ROOT::Math::PtEtaPhiMVector(0,0,mu0.Phi(),0)+ROOT::Math::PtEtaPhiMVector(0,0,mu1.Phi(),0), ROOT::Math::PtEtaPhiMVector(0,0,u_phi.second[17],0))"
+  - name: "delta_phi_lc"
+    expr: "ROOT::Math::VectorUtil::DeltaPhi(ROOT::Math::PtEtaPhiMVector(0,0,mu0.Phi(),0)+ROOT::Math::PtEtaPhiMVector(0,0,mu1.Phi(),0), ROOT::Math::PtEtaPhiMVector(0,0,u_phi.second[18],0))"
+  - name: "delta_phi_ml"
+    expr: "ROOT::Math::VectorUtil::DeltaPhi(ROOT::Math::PtEtaPhiMVector(0,0,mu0.Phi(),0)+ROOT::Math::PtEtaPhiMVector(0,0,mu1.Phi(),0), ROOT::Math::PtEtaPhiMVector(0,0,u_phi.second[19],0))"
+
+cluster_defines_central: &cluster_defines_central
+  - name: "fCluster_rawE_central"
+    expr: "fCluster_rawE[fClusterEta > -2.5 && fClusterEta < 2.5]"
+  - name: "fCluster_calE_central"
+    expr: "fCluster_calE[fClusterEta > -2.5 && fClusterEta < 2.5]"
+  - name: "fCluster_MLE_central"
+    expr: "fCluster_MLE[fClusterEta > -2.5 && fClusterEta < 2.5]"
+  - name: "fCluster_truthE_central"
+    expr: "fCluster_truthE[fClusterEta > -2.5 && fClusterEta < 2.5]"
+
+cluster_histograms_central: &cluster_histograms_central
+  - name: "cluster_energy_em_central"
+    title: "Cluster energy (EM, |eta| < 2.5);E [MeV];Events"
+    x: {expr: "fCluster_rawE_central", bins: 500, min: 0, max: 10000}
+    kind: "H1"
+  - name: "cluster_energy_lc_central"
+    title: "Cluster energy (LC, |eta| < 2.5);E [MeV];Events"
+    x: {expr: "fCluster_calE_central", bins: 500, min: 0, max: 10000}
+    kind: "H1"
+  - name: "cluster_energy_ml_central"
+    title: "Cluster energy (ML, |eta| < 2.5);E [MeV];Events"
+    x: {expr: "fCluster_MLE_central", bins: 500, min: 0, max: 10000}
+    kind: "H1"
+  - name: "cluster_energy_truth_central"
+    title: "Cluster energy (truth, |eta| < 2.5);E [MeV];Events"
+    x: {expr: "fCluster_truthE_central", bins: 500, min: 0, max: 10000}
+    kind: "H1"
+
+cluster_defines_forward: &cluster_defines_forward
+  - name: "fCluster_rawE_forward"
+    expr: "fCluster_rawE[fClusterEta < -2.5 || fClusterEta > 2.5]"
+  - name: "fCluster_calE_forward"
+    expr: "fCluster_calE[fClusterEta < -2.5 || fClusterEta > 2.5]"
+  - name: "fCluster_MLE_forward"
+    expr: "fCluster_MLE[fClusterEta < -2.5 || fClusterEta > 2.5]"
+  - name: "fCluster_truthE_forward"
+    expr: "fCluster_truthE[fClusterEta < -2.5 || fClusterEta > 2.5]"
+
+cluster_histograms_forward: &cluster_histograms_forward
+  - name: "cluster_energy_em_forward"
+    title: "Cluster energy (EM, |eta| > 2.5);E [MeV];Events"
+    x: {expr: "fCluster_rawE_forward", bins: 500, min: 0, max: 10000}
+    kind: "H1"
+  - name: "cluster_energy_lc_forward"
+    title: "Cluster energy (LC, |eta| > 2.5);E [MeV];Events"
+    x: {expr: "fCluster_calE_forward", bins: 500, min: 0, max: 10000}
+    kind: "H1"
+  - name: "cluster_energy_ml_forward"
+    title: "Cluster energy (ML, |eta| > 2.5);E [MeV];Events"
+    x: {expr: "fCluster_MLE_forward", bins: 500, min: 0, max: 10000}
+    kind: "H1"
+  - name: "cluster_energy_truth_forward"
+    title: "Cluster energy (truth, |eta| > 2.5);E [MeV];Events"
+    x: {expr: "fCluster_truthE_forward", bins: 500, min: 0, max: 10000}
+    kind: "H1"
 
 cluster_histograms: &cluster_histograms
   # cluster energy distributions
@@ -158,20 +259,48 @@ cluster_histograms: &cluster_histograms
   - name: "cluster_response_vs_truthE_em"
     title: "Cluster response vs truth E (EM);E_{truth} [MeV];E_{reco}/E_{truth}"
     kind: "H2"
-    x: {expr: "fCluster_truthE", bins: 100, min: 0, max: 100000}
-    y: {expr: "fCluster_rawE/fCluster_truthE", bins: 100, min: 0, max: 4}
+    x: {expr: "fCluster_truthE", bins: 1000, min: 0, max: 100000}
+    y: {expr: "fCluster_rawE/fCluster_truthE", bins: 70, min: 0, max: 7}
 
   - name: "cluster_response_vs_truthE_lc"
     title: "Cluster response vs truth E (LC);E_{truth} [MeV];E_{reco}/E_{truth}"
     kind: "H2"
-    x: {expr: "fCluster_truthE", bins: 100, min: 0, max: 100000}
-    y: {expr: "fCluster_calE/fCluster_truthE", bins: 100, min: 0, max: 4}
+    x: {expr: "fCluster_truthE", bins: 1000, min: 0, max: 100000}
+    y: {expr: "fCluster_calE/fCluster_truthE", bins: 70, min: 0, max: 7}
 
   - name: "cluster_response_vs_truthE_ml"
     title: "Cluster response vs truth E (ML);E_{truth} [MeV];E_{reco}/E_{truth}"
     kind: "H2"
-    x: {expr: "fCluster_truthE", bins: 100, min: 0, max: 100000}
-    y: {expr: "fCluster_MLE/fCluster_truthE", bins: 100, min: 0, max: 4}
+    x: {expr: "fCluster_truthE", bins: 1000, min: 0, max: 100000}
+    y: {expr: "fCluster_MLE/fCluster_truthE", bins: 70, min: 0, max: 7}
+
+  # ML energy response as a function of EM energy -- 2D histograms
+  - name: "cluster_ml_response_vs_em_energy"
+    title: "Cluster ML response vs EM energy;E_{EM} [MeV];E_{ML}/E_{truth}"
+    kind: "H2"
+    x: {expr: "fCluster_rawE", bins: 1000, min: 0, max: 100000}
+    y: {expr: "fCluster_MLE/fCluster_truthE", bins: 70, min: 0, max: 7}
+
+  # 2D plot of EM, LCW, ML energy vs truth energy
+  - name: "cluster_ml_energy_vs_truthE"
+    title: "Cluster ML energy vs truth E;E_{truth} [MeV];E_{ML} [MeV]"
+    kind: "H2"
+    x: {expr: "fCluster_truthE", bins: 1000, min: 0, max: 100000}
+    y: {expr: "fCluster_MLE", bins: 1000, min: 0, max: 100000}
+
+  - name: "cluster_lc_energy_vs_truthE"
+    title: "Cluster LC energy vs truth E;E_{truth} [MeV];E_{LC} [MeV]"
+    kind: "H2"
+    x: {expr: "fCluster_truthE", bins: 1000, min: 0, max: 100000}
+    y: {expr: "fCluster_calE", bins: 1000, min: 0, max: 100000}
+
+  - name: "cluster_em_energy_vs_truthE"
+    title: "Cluster EM energy vs truth E;E_{truth} [MeV];E_{EM} [MeV]"
+    kind: "H2"
+    x: {expr: "fCluster_truthE", bins: 1000, min: 0, max: 100000}
+    y: {expr: "fCluster_rawE", bins: 1000, min: 0, max: 100000}
+
+
 
   # cluster resolution
   - name: "cluster_resolution_em"
@@ -405,6 +534,12 @@ common_histograms: &common_histograms
     kind: "H1"
     x: {expr: "z_pt", bins: 60, min: 0, max: 200}
 
+  # u_perp for pfoEM, pfo, and pfoML
+  - name: "u_perp_pfo_em"
+    title: "u_{#perp} (pfoEM (medium));u_{#perp} [GeV];Events"
+    kind: "H1"
+    x: {expr: "u_perp_21/1000.0", bins: 200, min: -50, max: 50}
+ 
   - name: "u_perp_pfo_lc"
     title: "u_{#perp} (pfo (medium));u_{#perp} [GeV];Events"
     kind: "H1"
@@ -415,12 +550,7 @@ common_histograms: &common_histograms
     kind: "H1"
     x: {expr: "u_perp_22/1000.0", bins: 200, min: -50, max: 50}
   
-  # u_perp for em energy
-  - name: "u_perp_pfo_em"
-    title: "u_{#perp} (pfoEM (medium));u_{#perp} [GeV];Events"
-    kind: "H1"
-    x: {expr: "u_perp_21/1000.0", bins: 200, min: -50, max: 50}
-  
+ 
   # u_perp from em, lc and ml clusters
   - name: "u_perp_em"
     title: "u_{#perp} (EM);u_{#perp} [GeV];Events"
@@ -435,75 +565,239 @@ common_histograms: &common_histograms
     kind: "H1"
     x: {expr: "u_perp_ml/1000.0", bins: 200, min: -50, max: 50}
 
+  # u_parallel for pfo, pfoEM and pfoML
+  - name: "u_parallel_pfo_em"
+    title: "u_{#parallel} (pfoEM (medium));u_{#parallel} [GeV];Events"
+    kind: "H1"
+    x: {expr: "u_parallel_21/1000.0", bins: 200, min: -100, max: 100}
+  - name: "u_parallel_pfo_lc"
+    title: "u_{#parallel} (pfo (medium));u_{#parallel} [GeV];Events"
+    kind: "H1"
+    x: {expr: "u_parallel_20/1000.0", bins: 200, min: -100, max: 100}
+  - name: "u_parallel_pfo_ml"
+    title: "u_{#parallel} (pfoML (medium));u_{#parallel} [GeV];Events"
+    kind: "H1"
+    x: {expr: "u_parallel_22/1000.0", bins: 200, min: -100, max: 100}
+
+  # u_parallel from em, lc and ml clusters
+  - name: "u_parallel_em"
+    title: "u_{#parallel} (EM);u_{#parallel} [GeV];Events"
+    kind: "H1"
+    x: {expr: "u_parallel_em/1000.0", bins: 200, min: -100, max: 100}
+  - name: "u_parallel_lc"
+    title: "u_{#parallel} (LC);u_{#parallel} [GeV];Events"
+    kind: "H1"
+    x: {expr: "u_parallel_lc/1000.0", bins: 200, min: -100, max: 100}
+  - name: "u_parallel_ml"
+    title: "u_{#parallel} (ML);u_{#parallel} [GeV];Events"
+    kind: "H1"
+    x: {expr: "u_parallel_ml/1000.0", bins: 200, min: -100, max: 100}
+
+
+  # (sumet - u_pt) for pfo, pfoEM and pfoML
+  - name: "sumet_minus_u_pt_pfo_em"
+    title: "(#sum E_{T} - u_{T}) (pfoEM (medium));(#sum E_{T} - u_{T}) [GeV];Events"
+    kind: "H1"
+    x: {expr: "sumet_minus_u_pt_21/1000.0", bins: 200, min: -100, max: 200}
+  - name: "sumet_minus_u_pt_pfo_lc"
+    title: "(#sum E_{T} - u_{T}) (pfo (medium));(#sum E_{T} - u_{T}) [GeV];Events"
+    kind: "H1"
+    x: {expr: "sumet_minus_u_pt_20/1000.0", bins: 200, min: -100, max: 200}
+  - name: "sumet_minus_u_pt_pfo_ml"
+    title: "(#sum E_{T} - u_{T}) (pfoML (medium));(#sum E_{T} - u_{T}) [GeV];Events"
+    kind: "H1"
+    x: {expr: "sumet_minus_u_pt_22/1000.0", bins: 200, min: -100, max: 200}
+
+  # (sumet - u_pt) from em, lc and ml clusters
+  - name: "sumet_minus_u_pt_em"
+    title: "(#sum E_{T} - u_{T}) (EM);(#sum E_{T} - u_{T}) [GeV];Events"
+    kind: "H1"
+    x: {expr: "sumet_minus_u_pt_em/1000.0", bins: 200, min: -100, max: 200}
+  - name: "sumet_minus_u_pt_lc"
+    title: "(#sum E_{T} - u_{T}) (LC);(#sum E_{T} - u_{T}) [GeV];Events"
+    kind: "H1"
+    x: {expr: "sumet_minus_u_pt_lc/1000.0", bins: 200, min: -100, max: 200}
+  - name: "sumet_minus_u_pt_ml"
+    title: "(#sum E_{T} - u_{T}) (ML);(#sum E_{T} - u_{T}) [GeV];Events"
+    kind: "H1"
+    x: {expr: "sumet_minus_u_pt_ml/1000.0", bins: 200, min: -100, max: 200}
+
+  # \delta phi (u_phi - z_phi) for pfo, pfoEM and pfoML
+  - name: "delta_phi_pfo_em"
+    title: "#Delta#phi (pfoEM (medium));#Delta#phi;Events"
+    kind: "H1"
+    x: {expr: "delta_phi_pfo_em", bins: 64, min: -3.2, max: 3.2}
+  - name: "delta_phi_pfo_lc"
+    title: "#Delta#phi (pfo (medium));#Delta#phi;Events"
+    kind: "H1"
+    x: {expr: "delta_phi_pfo_lc", bins: 64, min: -3.2, max: 3.2}
+  - name: "delta_phi_pfo_ml"
+    title: "#Delta#phi (pfoML (medium));#Delta#phi;Events"
+    kind: "H1"
+    x: {expr: "delta_phi_pfo_ml", bins: 64, min: -3.2, max: 3.2}
+
+  # \delta phi (u_phi - z_phi) from em, lc and ml clusters
+  - name: "delta_phi_em"
+    title: "#Delta#phi (EM);#Delta#phi;Events"
+    kind: "H1"
+    x: {expr: "delta_phi_em", bins: 64, min: -3.2, max: 3.2}
+  - name: "delta_phi_lc"
+    title: "#Delta#phi (LC);#Delta#phi;Events"
+    kind: "H1"
+    x: {expr: "delta_phi_lc", bins: 64, min: -3.2, max: 3.2}
+  - name: "delta_phi_ml"
+    title: "#Delta#phi (ML);#Delta#phi;Events"
+    kind: "H1"
+    x: {expr: "delta_phi_ml", bins: 64, min: -3.2, max: 3.2}
+
+  # 2D histograms \delta phi (u_phi - z_phi) vs Z pT
+  - name: "delta_phi_pfo_em_vs_zpt"
+    title: "#Delta#phi (pfoEM (medium)) vs Z p_{T};Z p_{T} [GeV];#Delta#phi"
+    kind: "H2"
+    x: {expr: "z_pt", bins: 60, min: 0, max: 200}
+    y: {expr: "delta_phi_pfo_em", bins: 64, min: -3.2, max: 3.2}
+  - name: "delta_phi_pfo_lc_vs_zpt"
+    title: "#Delta#phi (pfo (medium)) vs Z p_{T};Z p_{T} [GeV];#Delta#phi"
+    kind: "H2"
+    x: {expr: "z_pt", bins: 60, min: 0, max: 200}
+    y: {expr: "delta_phi_pfo_lc", bins: 64, min: -3.2, max: 3.2}
+  - name: "delta_phi_pfo_ml_vs_zpt"
+    title: "#Delta#phi (pfoML (medium)) vs Z p_{T};Z p_{T} [GeV];#Delta#phi"
+    kind: "H2"
+    x: {expr: "z_pt", bins: 60, min: 0, max: 200}
+    y: {expr: "delta_phi_pfo_ml", bins: 64, min: -3.2, max: 3.2}
+
+
+  # 2D histograms \delta phi (u_phi - z_phi) vs Z pT for em, lc and ml clusters
+  - name: "delta_phi_em_vs_zpt"
+    title: "#Delta#phi (EM) vs Z p_{T};Z p_{T} [GeV];#Delta#phi"
+    kind: "H2"
+    x: {expr: "z_pt", bins: 60, min: 0, max: 200}
+    y: {expr: "delta_phi_em", bins: 64, min: -3.2, max: 3.2}
+  - name: "delta_phi_lc_vs_zpt"
+    title: "#Delta#phi (LC) vs Z p_{T};Z p_{T} [GeV];#Delta#phi"
+    kind: "H2"
+    x: {expr: "z_pt", bins: 60, min: 0, max: 200}
+    y: {expr: "delta_phi_lc", bins: 64, min: -3.2, max: 3.2}
+  - name: "delta_phi_ml_vs_zpt"
+    title: "#Delta#phi (ML) vs Z p_{T};Z p_{T} [GeV];#Delta#phi"
+    kind: "H2"
+    x: {expr: "z_pt", bins: 60, min: 0, max: 200}
+    y: {expr: "delta_phi_ml", bins: 64, min: -3.2, max: 3.2}
+
+  # 2D histograms \delta phi (u_phi - z_phi) vs u_pt. make projection in y-axis and plot the mean
+  - name: "delta_phi_pfo_em_vs_upt_profile"
+    title: "#Delta#phi (pfoEM (medium)) vs u_{T};u_{T} [GeV];#Delta#phi"
+    kind: "P1"
+    x: {expr: "u_pt.second[21]/1000.0", bins: 100, min: 0, max: 100}
+    y: {expr: "delta_phi_pfo_em"}
+  - name: "delta_phi_pfo_lc_vs_upt_profile"
+    title: "#Delta#phi (pfo (medium)) vs u_{T};u_{T} [GeV];#Delta#phi"
+    kind: "P1"
+    x: {expr: "u_pt.second[20]/1000.0", bins: 100, min: 0, max: 100}
+    y: {expr: "delta_phi_pfo_lc"}
+  - name: "delta_phi_pfo_ml_vs_upt_profile"
+    title: "#Delta#phi (pfoML (medium)) vs u_{T};u_{T} [GeV];#Delta#phi"
+    kind: "P1"
+    x: {expr: "u_pt.second[22]/1000.0", bins: 100, min: 0, max: 100}
+    y: {expr: "delta_phi_pfo_ml"}
+
+  # same as above but for em, lc and ml clusters
+  - name: "delta_phi_em_vs_upt_profile"
+    title: "#Delta#phi (EM) vs u_{T};u_{T} [GeV];#Delta#phi"
+    kind: "P1"
+    x: {expr: "u_pt.second[17]/1000.0", bins: 100, min: 0, max: 100}
+    y: {expr: "delta_phi_em"}
+  - name: "delta_phi_lc_vs_upt_profile"
+    title: "#Delta#phi (LC) vs u_{T};u_{T} [GeV];#Delta#phi"
+    kind: "P1"
+    x: {expr: "u_pt.second[18]/1000.0", bins: 100, min: 0, max: 100}
+    y: {expr: "delta_phi_lc"}
+  - name: "delta_phi_ml_vs_upt_profile"
+    title: "#Delta#phi (ML) vs u_{T};u_{T} [GeV];#Delta#phi"
+    kind: "P1"
+    x: {expr: "u_pt.second[19]/1000.0", bins: 100, min: 0, max: 100}
+    y: {expr: "delta_phi_ml"}
+
+  # Make 2D correlation plots between pfo and cluster based recoil, even by event
+  - name: "ut_pt_pfo_em_vs_ut_pt_em_cluster"
+    title: "u_{T} (pfoEM (medium)) vs u_{T} (EM cluster);u_{T} (EM cluster) [GeV];u_{T} (pfoEM (medium)) [GeV]"
+    kind: "H2"
+    x: {expr: "u_pt.second[17]/1000.0", bins: 100, min: 0, max: 100}
+    y: {expr: "u_pt.second[20]/1000.0", bins: 100, min: 0, max: 100}
+
+  - name: "ut_pt_pfo_lc_vs_ut_pt_lc_cluster"
+    title: "u_{T} (pfo (medium)) vs u_{T} (LC cluster);u_{T} (LC cluster) [GeV];u_{T} (pfo (medium)) [GeV]"
+    kind: "H2"
+    x: {expr: "u_pt.second[18]/1000.0", bins: 100, min: 0, max: 100}
+    y: {expr: "u_pt.second[21]/1000.0", bins: 100, min: 0, max: 100}
+
+  - name: "ut_pt_pfo_ml_vs_ut_pt_ml_cluster"
+    title: "u_{T} (pfoML (medium)) vs u_{T} (ML cluster);u_{T} (ML cluster) [GeV];u_{T} (pfoML (medium)) [GeV]"
+    kind: "H2"
+    x: {expr: "u_pt.second[19]/1000.0", bins: 100, min: 0, max: 100}
+    y: {expr: "u_pt.second[22]/1000.0", bins: 100, min: 0, max: 100}
+
+  # 2d correlations between pfo ut and truth ut
+  - name: "ut_pt_pfo_em_vs_tu_pt_truth"
+    title: "u_{T} (pfoEM (medium)) vs u_{T} (truth);u_{T} (truth) [GeV];u_{T} (pfoEM (medium)) [GeV]"
+    kind: "H2"
+    x: {expr: "tu_pt.second[1]/1000.0", bins: 100, min: 0, max: 100}
+    y: {expr: "u_pt.second[21]/1000.0", bins: 100, min: 0, max: 100}
+
+  - name: "ut_pt_pfo_lc_vs_tu_pt_truth"
+    title: "u_{T} (pfo (medium)) vs u_{T} (truth);u_{T} (truth) [GeV];u_{T} (pfo (medium)) [GeV]"
+    kind: "H2"
+    x: {expr: "tu_pt.second[1]/1000.0", bins: 100, min: 0, max: 100}
+    y: {expr: "u_pt.second[20]/1000.0", bins: 100, min: 0, max: 100}
+
+  - name: "ut_pt_pfo_ml_vs_tu_pt_truth"
+    title: "u_{T} (pfoML (medium)) vs u_{T} (truth);u_{T} (truth) [GeV];u_{T} (pfoML (medium)) [GeV]"
+    kind: "H2"
+    x: {expr: "tu_pt.second[1]/1000.0", bins: 100, min: 0, max: 100}
+    y: {expr: "u_pt.second[22]/1000.0", bins: 100, min: 0, max: 100}
+
+
+  # 2d correlations between pfo ut and truth ut from clusters
+  - name: "ut_pt_em_vs_tu_pt_truth"
+    title: "u_{T} (EM cluster) vs u_{T} (truth);u_{T} (truth) [GeV];u_{T} (EM cluster) [GeV]"
+    kind: "H2"
+    x: {expr: "tu_pt.second[1]/1000.0", bins: 100, min: 0, max: 100}
+    y: {expr: "u_pt.second[17]/1000.0", bins: 100, min: 0, max: 100}
+
+  - name: "ut_pt_lc_vs_tu_pt_truth"
+    title: "u_{T} (LC cluster) vs u_{T} (truth);u_{T} (truth) [GeV];u_{T} (LC cluster) [GeV]"
+    kind: "H2"
+    x: {expr: "tu_pt.second[1]/1000.0", bins: 100, min: 0, max: 100}
+    y: {expr: "u_pt.second[18]/1000.0", bins: 100, min: 0, max: 100}
+
+  - name: "ut_pt_ml_vs_tu_pt_truth"
+    title: "u_{T} (ML cluster) vs u_{T} (truth);u_{T} (truth) [GeV];u_{T} (ML cluster) [GeV]"
+    kind: "H2"
+    x: {expr: "tu_pt.second[1]/1000.0", bins: 100, min: 0, max: 100}
+    y: {expr: "u_pt.second[19]/1000.0", bins: 100, min: 0, max: 100}
+
+
 
 outputs:
   - file: "./output-root-files/output_zmumu_withPU.root"
     #compression: "LZ4:4"            # optional ROOT compression (algo:level)
     selections:
       - tree: "treeAnaWZ"
-        defines: *cluster_defines
-        #filter: "mu_pt.size() > 1 && cluster_eta > -2.5 && cluster_eta < 2.5"
+        #filter: "mu_pt.size() > 1"
         dir: "clusters/all"
         hists: *cluster_histograms
 
-      - tree: "treeAnaWZ"
-        #filter: "mu_pt.size() > 1 && z_pt >= 30 && z_pt < 60 && std::abs(z_eta) < 1.0"
-        filter: "mu_pt.size() > 1 && z_pt >= 30 && z_pt < 60 "
-        dir: "recoil/zpt30to60_eta0to1"
-        defines: *common_defines
-        hists: *common_histograms
 
-      - tree: "treeAnaWZ"
-        #filter: "mu_pt.size() > 1 && z_pt >= 60 && z_pt < 90 && std::abs(z_eta) < 1.0"
-        filter: "mu_pt.size() > 1 && z_pt >= 60 && z_pt < 90 "
-        dir: "recoil/zpt60to90_eta0to1"
-        defines: *common_defines
-        hists: *common_histograms
+      #- tree: "treeAnaWZ"
+      #  defines: *common_defines
+      #  filter: "mu_pt.size() > 1"
+      #  dir: "clusters/all"
+      #  hists: *common_histograms
 
-      - tree: "treeAnaWZ"
-        #filter: "mu_pt.size() > 1 && z_pt >= 90 && z_pt < 120 && std::abs(z_eta) < 1.0"
-        filter: "mu_pt.size() > 1 && z_pt >= 90 && z_pt < 120 "
-        dir: "recoil/zpt90to120_eta0to1"
-        defines: *common_defines
-        hists: *common_histograms
-
-      - tree: "treeAnaWZ"
-        #filter: "mu_pt.size() > 1 && z_pt >= 120 && z_pt < 150 && std::abs(z_eta) < 1.0"
-        filter: "mu_pt.size() > 1 && z_pt >= 120 && z_pt < 150"
-        dir: "recoil/zpt120to150_eta0to1"
-        defines: *common_defines
-        hists: *common_histograms
-
-      - tree: "treeAnaWZ"
-        #filter: "mu_pt.size() > 1 && z_pt >= 150 && z_pt < 200 && std::abs(z_eta) < 1.0"
-        filter: "mu_pt.size() > 1 && z_pt >= 150 && z_pt < 200"
-        dir: "recoil/zpt150to200_eta0to1"
-        defines: *common_defines
-        hists: *common_histograms
-
-
-      - tree: "treeAnaWZ"              # can be "dir/subdir/Events"
-        filter: "mu_pt.size() > 1"      # keep events with at least one muon
-        #weight: "genWeight"         # optional weight expression; defaults to "1.0"
-        dir: "recoil/all"                # optional subdirectory in output file
-        defines: *common_defines        # common defines for all selections
-
-        hists: *common_histograms   # common histograms for all selections
-
-
-
-          ## --- 2D example ---
-          #- name: "mu_pt_vs_met"
-          #  title: "Muon p_{T} vs MET;Muon p_{T} [GeV];MET [GeV]"
-          #  kind: "H2"
-          #  x: {expr: "Muon_pt[0]", bins: 40, min: 0, max: 200}
-          #  y: {expr: "MET_pt",     bins: 40, min: 0, max: 200}
-
-          ## --- Profile (TProfile) ---
-          #- name: "jet_mult_vs_met"
-          #  title: "Jet multiplicity vs MET;MET [GeV];<N_{jets}>"
-          #  kind: "P1"
-          #  x: {expr: "MET_pt", bins: 50, min: 0, max: 250}
-          #  y: {expr: "nJet"}   # for profiles: y is the profiled quantity
-
-      # You can add more selections (different trees/filters/dirs) here
+      #- tree: "treeAnaWZ"              # can be "dir/subdir/Events"
+      #  filter: "mu_pt.size() == 1"      # keep events with at least one muon
+      #  #weight: "genWeight"         # optional weight expression; defaults to "1.0"
+      #  dir: "recoil/all"                # optional subdirectory in output file
+      #  defines: *common_defines        # common defines for all selections
+      #  hists: *common_histograms   # common histograms for all selections

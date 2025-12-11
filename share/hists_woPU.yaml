@@ -1,0 +1,397 @@
+##### recoil histogram maps
+## pfo
+## LC
+## EM
+## pfoEM
+## pfoEMCentral
+## pfoEMForward
+## pfoCharged
+## pfoNeutral
+## pfoNeutralEM
+## pfoNeutralEMCentral
+##  pfoNeutralEMForward
+##  pfoML 				--> cPFO + nPFO at ML scale  
+##  ML 				    --> clusters (nPFO) at ML scale |eta| < 2.5 + nPFO |eta| > 2.5 at EM scale
+##  pfoMLEMForward      --> cPFO + nPFO |eta| < 2.5 at ML scale + nPFO |eta| > 2.5 at EM scale (essentially same as 12)
+##  pfoMLCentralLCForward --> cPFO + nPFO |eta| < 2.5 at ML scale + nPFO |eta| > 2.5 at LC scale
+
+## updated
+
+##[0] SoftClus_ 95553.5078125
+##[1] SoftClus__0 19950.689453125
+##[2] SoftClus__el 19950.689453125
+##[3] SoftClus__elmu 19950.689453125
+##[4] SoftClus__elmujet 19950.689453125
+##[5] SoftClus_sumet_ 153345.671875
+##[6] SoftTrack_ 38035.9375
+##[7] SoftTrack_sumet_ 70118.9453125
+##[8] TSTMet_ 71675.875 --> TST  (Track-based Soft Term)
+##[9] el_loose_EM  59930.10546875
+##[10] el_loose_LC 94702.296875
+##[11] el_loose_ML 54480.421875
+##[12] el_loose_pfo 94039.7421875
+##[13] el_loose_pfoEM 94039.7421875
+##[14] el_loose_pfoML 88599.6875
+##[15] el_loose_pfoMLCentralLCForward 88599.6875
+##[16] el_loose_pfoMLEMForward 88599.6875
+##[17] el_medium_EM  59930.10546875
+##[18] el_medium_LC 94702.296875
+##[19] el_medium_ML 54480.421875
+##[20] el_medium_pfo 94039.7421875
+##[21] el_medium_pfoEM 94039.7421875
+##[22] el_medium_pfoML 88599.6875
+##[23] el_medium_pfoMLCentralLCForward 88599.6875
+##[24] el_medium_pfoMLEMForward 88599.6875
+
+input: "/mnt/nvme0n1p4/HEP/Work/Project-W-Z/MotorHead/quicktree2histo/plot-recoil/root-files/outTree_zmumu_woPU_merged.root"
+
+friends:
+  # optional, attach friend trees (same file or different files)
+  - {tree: "treeAnaWZ", alias: "C"}     # if in same file
+  # - {tree: "Other.root:Aux", alias: "A"}  # file:path syntax also supported (see code)
+
+common_defines: &common_defines
+  - name: "mu_mass"
+    expr: "0.105658"
+  - name: "mu0"
+    expr: "ROOT::Math::PtEtaPhiMVector(mu_pt[0], mu_eta[0], mu_phi[0], mu_mass)"
+  - name: "mu1"
+    expr: "ROOT::Math::PtEtaPhiMVector(mu_pt[1], mu_eta[1], mu_phi[1], mu_mass)"
+  - name: "z_vec"
+    expr: "(mu0 + mu1)"
+  - name: "z_pt"
+    expr: "z_vec.Pt()/1000.0"
+  - name: "z_eta"
+    expr: "z_vec.Eta()"
+  - name: "z_mass"
+    expr: "z_vec.M()/1000.0"
+  - name: "z_xy"
+    expr: "ROOT::Math::XYZVector(z_vec.Px(), z_vec.Py(), 0.0)"
+  - name: "u_xy_20"
+    expr: "ROOT::Math::XYZVector(u_pt.second[20]*std::cos(u_phi.second[20]), u_pt.second[20]*std::sin(u_phi.second[20]), 0.0)"
+  - name: "u_xy_21"
+    expr: "ROOT::Math::XYZVector(u_pt.second[21]*std::cos(u_phi.second[21]), u_pt.second[21]*std::sin(u_phi.second[21]), 0.0)"
+  - name: "u_xy_22"
+    expr: "ROOT::Math::XYZVector(u_pt.second[22]*std::cos(u_phi.second[22]), u_pt.second[22]*std::sin(u_phi.second[22]), 0.0)"
+  - name: "u_perp_20"
+    expr: "z_xy.Cross(u_xy_20).Z()/std::max(z_xy.Rho(), 1e-9)"
+  - name: "u_perp_21"
+    expr: "z_xy.Cross(u_xy_21).Z()/std::max(z_xy.Rho(), 1e-9)"
+  - name: "u_perp_22"
+    expr: "z_xy.Cross(u_xy_22).Z()/std::max(z_xy.Rho(), 1e-9)"
+
+cluster_defines: &cluster_defines
+  - name: "cluster_eta"
+    expr: "fClusterEta"
+
+cluster_histograms: &cluster_histograms
+  # cluster energy distributions
+  - name: "cluster_energy_truth"
+    title: "Cluster energy (truth);E [MeV];Events"
+    kind: "H1"
+    x: {expr: "fCluster_truthE", bins: 500, min: 0, max: 10000}
+
+  - name: "cluster_energy_em"
+    title: "Cluster energy (EM);E [MeV];Events"
+    kind: "H1"
+    x: {expr: "fCluster_rawE", bins: 500, min: 0, max: 10000}
+
+  - name: "cluster_energy_lc"
+    title: "Cluster energy (LC);E [MeV];Events"
+    kind: "H1"
+    x: {expr: "fCluster_calE", bins: 500, min: 0, max: 10000}
+
+  - name: "cluster_energy_ml"
+    title: "Cluster energy (ML);E [MeV];Events"
+    kind: "H1"
+    x: {expr: "fCluster_MLE", bins: 500, min: 0, max: 10000}
+
+  # cluster response
+  - name: "cluster_response_em"
+    title: "Cluster response (EM);E_{reco}/E_{truth};Events"
+    kind: "H1"
+    x: {expr: "fCluster_rawE/fCluster_truthE", bins: 100, min: 0, max: 2}
+
+  - name: "cluster_response_lc"
+    title: "Cluster response (LC);E_{reco}/E_{truth};Events"
+    kind: "H1"
+    x: {expr: "fCluster_calE/fCluster_truthE", bins: 100, min: 0, max: 2}
+
+  - name: "cluster_response_ml"
+    title: "Cluster response (ML);E_{reco}/E_{truth};Events"
+    kind: "H1"
+    x: {expr: "fCluster_MLE/fCluster_truthE", bins: 100, min: 0, max: 2}
+
+  # response as a function of truth energy -- 1D histograms
+  - name: "cluster_response_vs_truthE_em_profile"
+    title: "Cluster response vs truth E (EM);E_{truth} [MeV];E_{reco}/E_{truth}"
+    kind: "P1"
+    x: {expr: "fCluster_truthE", bins: 100, min: 0, max: 10000}
+    y: {expr: "fCluster_rawE/fCluster_truthE"}
+
+  - name: "cluster_response_vs_truthE_lc_profile"
+    title: "Cluster response vs truth E (LC);E_{truth} [MeV];E_{reco}/E_{truth}"
+    kind: "P1"
+    x: {expr: "fCluster_truthE", bins: 100, min: 0, max: 10000}
+    y: {expr: "fCluster_calE/fCluster_truthE"}
+
+  - name: "cluster_response_vs_truthE_ml_profile"
+    title: "Cluster response vs truth E (ML);E_{truth} [MeV];E_{reco}/E_{truth}"
+    kind: "P1"
+    x: {expr: "fCluster_truthE", bins: 100, min: 0, max: 10000}
+    y: {expr: "fCluster_MLE/fCluster_truthE"}
+
+  # response as a function of truth energy -- 2D histograms
+  - name: "cluster_response_vs_truthE_em"
+    title: "Cluster response vs truth E (EM);E_{truth} [MeV];E_{reco}/E_{truth}"
+    kind: "H2"
+    x: {expr: "fCluster_truthE", bins: 100, min: 0, max: 100000}
+    y: {expr: "fCluster_rawE/fCluster_truthE", bins: 100, min: 0, max: 4}
+
+  - name: "cluster_response_vs_truthE_lc"
+    title: "Cluster response vs truth E (LC);E_{truth} [MeV];E_{reco}/E_{truth}"
+    kind: "H2"
+    x: {expr: "fCluster_truthE", bins: 100, min: 0, max: 100000}
+    y: {expr: "fCluster_calE/fCluster_truthE", bins: 100, min: 0, max: 4}
+
+  - name: "cluster_response_vs_truthE_ml"
+    title: "Cluster response vs truth E (ML);E_{truth} [MeV];E_{reco}/E_{truth}"
+    kind: "H2"
+    x: {expr: "fCluster_truthE", bins: 100, min: 0, max: 100000}
+    y: {expr: "fCluster_MLE/fCluster_truthE", bins: 100, min: 0, max: 4}
+
+  # cluster resolution
+  - name: "cluster_resolution_em"
+    title: "Cluster resolution (EM);(E_{reco}-E_{truth})/E_{truth};Events"
+    kind: "H1"
+    x: {expr: "(fCluster_rawE - fCluster_truthE)/fCluster_truthE", bins: 100, min: -1, max: 1}
+
+  - name: "cluster_resolution_lc"
+    title: "Cluster resolution (LC);(E_{reco}-E_{truth})/E_{truth};Events"
+    kind: "H1"
+    x: {expr: "(fCluster_calE - fCluster_truthE)/fCluster_truthE", bins: 100, min: -1, max: 1}
+
+  - name: "cluster_resolution_ml"
+    title: "Cluster resolution (ML);(E_{reco}-E_{truth})/E_{truth};Events"
+    kind: "H1"
+    x: {expr: "(fCluster_MLE - fCluster_truthE)/fCluster_truthE", bins: 100, min: -1, max: 1}
+
+
+common_histograms: &common_histograms
+  # --- 1D fixed bins ---
+  - name: "mu_pt"
+    title: "Leading muon p_{T};p_{T} [GeV];Events"
+    kind: "H1"
+    x: {expr: "mu_pt[0]/1000.0", bins: 50, min: 0, max: 200}
+
+  # --- 1D variable bins ---
+  - name: "mu_eta"
+    title: "Leading muon #eta;#eta;Events"
+    kind: "H1"
+    x: {expr: "mu_eta[0]", edges: [-2.4, -2.1, -1.2, 0, 1.2, 2.1, 2.4]}
+
+  - name: "ut_pt_TSTMet"
+    title: "u_pt (TSTMet);u_pt [GeV];Events"
+    kind: "H1"
+    x: {expr: "u_pt.second[8]/1000.0", bins: 200, min: 0, max: 100}
+
+  #- name: "ut_pt_9"
+  #  title: "u_pt (EM (loose));u_pt [GeV];Events"
+  #  kind: "H1"
+  #  x: {expr: "u_pt.second[9]/1000.0", bins: 50, min: 0, max: 200}
+
+  #- name: "ut_pt_10"
+  #  title: "u_pt (LC (loose));u_pt [GeV];Events"
+  #  kind: "H1"
+  #  x: {expr: "u_pt.second[10]/1000.0", bins: 50, min: 0, max: 200}
+
+  #- name: "ut_pt_11"
+  #  title: "u_pt (ML (loose));u_pt [GeV];Events"
+  #  kind: "H1"
+  #  x: {expr: "u_pt.second[11]/1000.0", bins: 50, min: 0, max: 200} 
+
+  #- name: "ut_pt_12"
+  #  title: "u_pt (pfo (loose));u_pt [GeV];Events"
+  #  kind: "H1"
+  #  x: {expr: "u_pt.second[12]/1000.0", bins: 50, min: 0, max: 200}
+
+  #- name: "ut_pt_13"
+  #  title: "u_pt (pfoEM (loose));u_pt [GeV];Events"
+  #  kind: "H1"
+  #  x: {expr: "u_pt.second[13]/1000.0", bins: 50, min: 0, max: 200} 
+
+  #- name: "ut_pt_14"
+  #  title: "u_pt (pfoML (loose));u_pt [GeV];Events"
+  #  kind: "H1"
+  #  x: {expr: "u_pt.second[14]/1000.0", bins: 50, min: 0, max: 200}
+
+  #- name: "ut_pt_15"
+  #  title: "u_pt (pfoMLCentralLCForward (loose));u_pt [GeV];Events"
+  #  kind: "H1"
+  #  x: {expr: "u_pt.second[15]/1000.0", bins: 50, min: 0, max: 200} 
+
+  #- name: "ut_pt_16"
+  #  title: "u_pt (pfoMLEMForward (loose));u_pt [GeV];Events"
+  #  kind: "H1"
+  #  x: {expr: "u_pt.second[16]/1000.0", bins: 50, min: 0, max: 200}
+
+  ## --- medium ---
+  - name: "ut_pt_em"
+    title: "u_pt (EM (medium));u_pt [GeV];Events"
+    kind: "H1"
+    x: {expr: "u_pt.second[17]/1000.0", bins: 200, min: 0, max: 100}
+
+  - name: "ut_pt_lc"
+    title: "u_pt (LC (medium));u_pt [GeV];Events"
+    kind: "H1"
+    x: {expr: "u_pt.second[18]/1000.0", bins: 200, min: 0, max: 100}
+
+  - name: "ut_pt_ml"
+    title: "u_pt (ML (medium));u_pt [GeV];Events"
+    kind: "H1"
+    x: {expr: "u_pt.second[19]/1000.0", bins: 200, min: 0, max: 100} 
+
+  - name: "ut_pt_pfo_lc"
+    title: "u_pt (pfo (medium));u_pt [GeV];Events"
+    kind: "H1"
+    x: {expr: "u_pt.second[20]/1000.0", bins: 200, min: 0, max: 100}
+
+  - name: "ut_pt_pfo_em"
+    title: "u_pt (pfoEM (medium));u_pt [GeV];Events"
+    kind: "H1"
+    x: {expr: "u_pt.second[21]/1000.0", bins: 200, min: 0, max: 100} 
+
+  - name: "ut_pt_pfo_ml"
+    title: "u_pt (pfoML (medium));u_pt [GeV];Events"
+    kind: "H1"
+    x: {expr: "u_pt.second[22]/1000.0", bins: 200, min: 0, max: 100}
+
+  - name: "ut_pt_pfo_mlcentral_lcforward"
+    title: "u_pt (pfoMLCentralLCForward (medium));u_pt [GeV];Events"
+    kind: "H1"
+    x: {expr: "u_pt.second[23]/1000.0", bins: 200, min: 0, max: 100} 
+
+  - name: "ut_pt_pfo_ml_emforward"
+    title: "u_pt (pfoMLEMForward (medium));u_pt [GeV];Events"
+    kind: "H1"
+    x: {expr: "u_pt.second[24]/1000.0", bins: 200, min: 0, max: 100}
+
+  ## --- truth ---
+  - name: "ut_pt_nonInt"
+    title: "u_pt (truth, nonInt);u_pt [GeV];Events"
+    kind: "H1"
+    x: {expr: "tu_pt.second[0]/1000.0", bins: 200, min: 0, max: 100}
+
+  - name: "ut_pt_Int"
+    title: "u_pt (truth, Int);u_pt [GeV];Events"
+    kind: "H1"
+    x: {expr: "tu_pt.second[1]/1000.0", bins: 200, min: 0, max: 100}
+
+  - name: "ut_pt_IntOut"
+    title: "u_pt (truth, IntOut);u_pt [GeV];Events"
+    kind: "H1"
+    x: {expr: "tu_pt.second[2]/1000.0", bins: 200, min: 0, max: 100}
+
+  - name: "ut_pt_truth"
+    title: "u_pt (truth, Truth);u_pt [GeV];Events"
+    kind: "H1"
+    x: {expr: "tu_pt.second[3]/1000.0", bins: 200, min: 0, max: 100}
+
+  - name: "z_mass"
+    title: "Di-muon mass; m_{ll} [GeV];Events"
+    kind: "H1"
+    x: {expr: "z_mass", bins: 60, min: 0, max: 200}
+
+  - name: "z_pt"
+    title: "Z boson p_{T}; p_{T} [GeV];Events"
+    kind: "H1"
+    x: {expr: "z_pt", bins: 60, min: 0, max: 200}
+
+  - name: "u_perp_pfo_lc"
+    title: "u_{#perp} (pfo (medium));u_{#perp} [GeV];Events"
+    kind: "H1"
+    x: {expr: "u_perp_20/1000.0", bins: 200, min: -50, max: 50}
+
+  - name: "u_perp_pfo_ml"
+    title: "u_{#perp} (pfoML (medium));u_{#perp} [GeV];Events"
+    kind: "H1"
+    x: {expr: "u_perp_22/1000.0", bins: 200, min: -50, max: 50}
+  
+  # u_perp for em energy
+  - name: "u_perp_pfo_em"
+    title: "u_{#perp} (pfoEM (medium));u_{#perp} [GeV];Events"
+    kind: "H1"
+    x: {expr: "u_perp_21/1000.0", bins: 200, min: -50, max: 50}
+
+
+outputs:
+  - file: "./output-root-files/output_zmumu_woPU.root"
+    #compression: "LZ4:4"            # optional ROOT compression (algo:level)
+    selections:
+      - tree: "treeAnaWZ"
+        defines: *cluster_defines
+        #filter: "mu_pt.size() > 1 && cluster_eta > -2.5 && cluster_eta < 2.5"
+        dir: "clusters/all"
+        hists: *cluster_histograms
+
+      - tree: "treeAnaWZ"
+        #filter: "mu_pt.size() > 1 && z_pt >= 30 && z_pt < 60 && std::abs(z_eta) < 1.0"
+        filter: "mu_pt.size() > 1 && z_pt >= 30 && z_pt < 60 "
+        dir: "recoil/zpt30to60_eta0to1"
+        defines: *common_defines
+        hists: *common_histograms
+
+      - tree: "treeAnaWZ"
+        #filter: "mu_pt.size() > 1 && z_pt >= 60 && z_pt < 90 && std::abs(z_eta) < 1.0"
+        filter: "mu_pt.size() > 1 && z_pt >= 60 && z_pt < 90 "
+        dir: "recoil/zpt60to90_eta0to1"
+        defines: *common_defines
+        hists: *common_histograms
+
+      - tree: "treeAnaWZ"
+        #filter: "mu_pt.size() > 1 && z_pt >= 90 && z_pt < 120 && std::abs(z_eta) < 1.0"
+        filter: "mu_pt.size() > 1 && z_pt >= 90 && z_pt < 120 "
+        dir: "recoil/zpt90to120_eta0to1"
+        defines: *common_defines
+        hists: *common_histograms
+
+      - tree: "treeAnaWZ"
+        #filter: "mu_pt.size() > 1 && z_pt >= 120 && z_pt < 150 && std::abs(z_eta) < 1.0"
+        filter: "mu_pt.size() > 1 && z_pt >= 120 && z_pt < 150"
+        dir: "recoil/zpt120to150_eta0to1"
+        defines: *common_defines
+        hists: *common_histograms
+
+      - tree: "treeAnaWZ"
+        #filter: "mu_pt.size() > 1 && z_pt >= 150 && z_pt < 200 && std::abs(z_eta) < 1.0"
+        filter: "mu_pt.size() > 1 && z_pt >= 150 && z_pt < 200"
+        dir: "recoil/zpt150to200_eta0to1"
+        defines: *common_defines
+        hists: *common_histograms
+
+
+      - tree: "treeAnaWZ"              # can be "dir/subdir/Events"
+        filter: "mu_pt.size() > 1"      # keep events with at least one muon
+        #weight: "genWeight"         # optional weight expression; defaults to "1.0"
+        dir: "recoil/all"                # optional subdirectory in output file
+        defines: *common_defines        # common defines for all selections
+
+        hists: *common_histograms   # common histograms for all selections
+
+
+
+          ## --- 2D example ---
+          #- name: "mu_pt_vs_met"
+          #  title: "Muon p_{T} vs MET;Muon p_{T} [GeV];MET [GeV]"
+          #  kind: "H2"
+          #  x: {expr: "Muon_pt[0]", bins: 40, min: 0, max: 200}
+          #  y: {expr: "MET_pt",     bins: 40, min: 0, max: 200}
+
+          ## --- Profile (TProfile) ---
+          #- name: "jet_mult_vs_met"
+          #  title: "Jet multiplicity vs MET;MET [GeV];<N_{jets}>"
+          #  kind: "P1"
+          #  x: {expr: "MET_pt", bins: 50, min: 0, max: 250}
+          #  y: {expr: "nJet"}   # for profiles: y is the profiled quantity
+
+      # You can add more selections (different trees/filters/dirs) here
