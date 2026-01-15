@@ -1,9 +1,11 @@
 **/*.png
 **/*.root
 **/*venv
+**/*venv-*
 **/*.pdf
 **/*root-files
 **/*output-root-files
 **/*plots-withPU
 **/*plots-woPU
 **/*root-files
+**/*.pyc

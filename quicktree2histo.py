@@ -45,7 +45,7 @@ class Config:
 
 
 class ConfigLoader:
-    @staticmethod
+    @staticmethod # This function belongs with the class, not to an instance
     def load(path: str) -> Config:
         with open(path, encoding="utf-8") as stream:
             data = yaml.safe_load(stream)
@@ -54,32 +54,85 @@ class ConfigLoader:
         for out_cfg in data.get("outputs", []):
             selections: List[SelectionSpec] = []
             for sel_cfg in out_cfg.get("selections", []):
-                defines = [
-                    DefineSpec(name=d["name"], expr=d["expr"])
-                    for d in sel_cfg.get("defines", [])
-                ]
-                histograms = [
-                    HistogramSpec(
-                        name=h["name"],
-                        title=h.get("title", h["name"]),
-                        kind=h.get("kind", "H1").upper(),
-                        axes={k: dict(v) for k, v in h.items() if k in {"x", "y", "z"}},
+                defines = []
+                for d in sel_cfg.get("defines", []):
+                    obj = DefineSpec(name=d["name"], expr=d["expr"])
+                    defines.append(obj)
+
+                histograms = []
+                for h in sel_cfg.get("hists", []):
+                    # Extract basic fields
+                    name = h["name"]
+                    title = h.get("title", h["name"])  # Use name as fallback if title missing
+                    kind = h.get("kind", "H1").upper()  # Default to "H1" if kind missing
+                    
+                    # Filter axes to only keep x, y, z dimensions
+                    axes = {}
+                    for key, value in h.items():
+                        if key in {"x", "y", "z"}:
+                            axes[key] = dict(value)
+                    
+                    # Create the histogram specification object
+                    histogram = HistogramSpec(
+                        name=name,
+                        title=title,
+                        kind=kind,
+                        axes=axes
                     )
-                    for h in sel_cfg.get("hists", [])
-                ]
-                selections.append(
-                    SelectionSpec(
-                        tree=sel_cfg["tree"],
-                        filter_expr=sel_cfg.get("filter"),
-                        weight_expr=sel_cfg.get("weight", "1.0"),
-                        directory=sel_cfg.get("dir", ""),
-                        defines=defines,
-                        histograms=histograms,
-                    )
+                    histograms.append(histogram)
+                
+                # Extract selection configuration fields
+                tree_name = sel_cfg["tree"]
+                filter_expression = sel_cfg.get("filter")  # Optional: can be None
+                weight_expression = sel_cfg.get("weight", "1.0")  # Default weight is 1.0
+                output_directory = sel_cfg.get("dir", "")  # Default to root directory
+                
+                # Create the selection specification
+                selection = SelectionSpec(
+                    tree=tree_name,
+                    filter_expr=filter_expression,
+                    weight_expr=weight_expression,
+                    directory=output_directory,
+                    defines=defines,
+                    histograms=histograms,
                 )
+                
+                # Add to selections list
+                selections.append(selection)
+
             outputs.append(OutputSpec(file=out_cfg["file"], selections=selections))
 
         return Config(input_file=data["input"], outputs=outputs)
+
+def print_config(config: Config) -> None:
+    """Print the loaded configuration in a structured, readable format."""
+    print("\n" + "=" * 60)
+    print("LOADED CONFIGURATION")
+    print("=" * 60)
+    
+    print(f"\nInput File: {config.input_file}")
+    print(f"Number of Outputs: {len(config.outputs)}\n")
+    
+    for out_idx, output in enumerate(config.outputs, 1):
+        print(f"  Output {out_idx}: {output.file}")
+        print(f"    Selections: {len(output.selections)}")
+        
+        for sel_idx, selection in enumerate(output.selections, 1):
+            print(f"      Selection {sel_idx}:")
+            print(f"        Tree: {selection.tree}")
+            print(f"        Filter: {selection.filter_expr}")
+            print(f"        Weight: {selection.weight_expr}")
+            print(f"        Directory: {selection.directory}")
+            print(f"        Defines: {len(selection.defines)}")
+            for define in selection.defines:
+                print(f"          - {define.name} = {define.expr}")
+            print(f"        Histograms: {len(selection.histograms)}")
+            for hist in selection.histograms:
+                print(f"          - {hist.name} ({hist.kind}): {hist.title}")
+                for axis_name, axis_cfg in hist.axes.items():
+                    print(f"              {axis_name}: {axis_cfg}")
+    
+    print("=" * 60 + "\n")
 
 
 class AxisFactory:
@@ -266,6 +319,8 @@ def process_output(input_file: ROOT.TFile, spec: OutputSpec) -> None:
         raise RuntimeError(f"Cannot create output file: {spec.file}")
 
     try:
+        # List to store histogram results before writing to file
+        # Each tuple contains: (output_directory_path, histogram_result_object)
         pending: List[Tuple[str, ROOT.RDF.RResultPtr]] = []
         for selection in spec.selections:
             pending.extend(process_selection(input_file, selection))
@@ -283,6 +338,7 @@ def run(config_path: str) -> None:
     ROOT.TH1.SetDefaultSumw2(True)
 
     config = ConfigLoader.load(config_path)
+    print_config(config)
     input_file = open_root_file(config.input_file)
 
     try:
