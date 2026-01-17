@@ -250,22 +250,152 @@ def build_histograms(
             cfg_x = axes["x"]
             axis = AxisFactory.make_1d(hist.name, hist.title, cfg_x)
             column = ensure_column(cfg_x["expr"])
-            results.append(
-                (selection.directory, rdf.Histo1D(axis, column, selection.weight_expr) if selection.weight_expr.strip() not in {"", "1.0"}
-                 else rdf.Histo1D(axis, column))
-            )
+            # choose the Histo1D call based on whether a non-default weight is provided
+            weight = selection.weight_expr.strip()
+            if weight == "" or weight == "1.0":
+                hist_res = rdf.Histo1D(axis, column)
+            else:
+                hist_res = rdf.Histo1D(axis, column, weight)
+
+            results.append((selection.directory, hist_res))
+
 
         elif kind == "H2":
             cfg_x, cfg_y = axes["x"], axes["y"]
-            axis = AxisFactory.make_2d(hist.name, hist.title, cfg_x, cfg_y)
-            colx, coly = ensure_column(cfg_x["expr"]), ensure_column(cfg_y["expr"])
-            results.append(
-                (
-                    selection.directory,
-                    rdf.Histo2D(axis, colx, coly, selection.weight_expr) if selection.weight_expr.strip() not in {"", "1.0"}
-                    else rdf.Histo2D(axis, colx, coly),
+            # If the Y axis specifies an aggregation kind (e.g. MEAN, IQR),
+            # treat this H2 as a profile-like histogram (aggregated Y per X bin).
+            y_kind = cfg_y.get("kind", "").upper()
+            # ensure column names (may create intermediate Define columns)
+            colx = ensure_column(cfg_x["expr"])
+            coly = ensure_column(cfg_y["expr"])
+
+            if y_kind in {"MEAN"}:
+                # Compute MEAN of Y per X bin and return a TH1D (MEAN vs X).
+                # Build X bin edges from cfg_x (support edges or uniform bins)
+                def _edges_from_cfg(cfg: Dict[str, Any]) -> List[float]:
+                    if "edges" in cfg:
+                        return [float(x) for x in cfg["edges"]]
+                    bins = int(cfg.get("bins", 50))
+                    xmin = float(cfg.get("min", 0.0))
+                    xmax = float(cfg.get("max", 1.0))
+                    step = (xmax - xmin) / bins if bins > 0 else 0.0
+                    return [xmin + i * step for i in range(bins + 1)]
+
+                edges = _edges_from_cfg(cfg_x)
+                nbins = max(0, len(edges) - 1)
+                # Create output TH1 with the same X binning
+                out_hist = ROOT.TH1D(hist.name, hist.title, nbins, array.array("d", edges))
+
+                # For each X bin, filter events in that X range, compute mean Y,
+                # and set it into the output TH1.
+                for i in range(nbins):
+                    left, right = edges[i], edges[i + 1]
+                    if i < nbins - 1:
+                        bin_filter = f"({colx} >= {left}) && ({colx} < {right})"
+                    else:
+                        bin_filter = f"({colx} >= {left}) && ({colx} <= {right})"
+
+                    rdf_bin = rdf.Filter(bin_filter)
+
+                    # Compute mean using Mean action
+                    mean_res = rdf_bin.Mean(coly)
+                    mean_val = mean_res.GetValue()
+
+                    out_hist.SetBinContent(i + 1, mean_val)
+
+                # Wrap the precomputed TH1 into a simple object exposing GetValue()
+                class _ImmediateResult:
+                    def __init__(self, obj: ROOT.TH1):
+                        self._obj = obj
+
+                    def GetValue(self):
+                        return self._obj
+
+                results.append((selection.directory, _ImmediateResult(out_hist)))
+
+            elif y_kind in {"IQR"}:
+                # Compute 68% interval (Q84 - Q16) per X bin and return a TH1 (width68 vs X).
+                # Build X bin edges from cfg_x (support edges or uniform bins)
+                def _edges_from_cfg(cfg: Dict[str, Any]) -> List[float]:
+                    if "edges" in cfg:
+                        return [float(x) for x in cfg["edges"]]
+                    bins = int(cfg.get("bins", 50))
+                    xmin = float(cfg.get("min", 0.0))
+                    xmax = float(cfg.get("max", 1.0))
+                    step = (xmax - xmin) / bins if bins > 0 else 0.0
+                    return [xmin + i * step for i in range(bins + 1)]
+
+                edges = _edges_from_cfg(cfg_x)
+                nbins = max(0, len(edges) - 1)
+                # Create output TH1 with the same X binning
+                out_hist = ROOT.TH1D(hist.name, hist.title, nbins, array.array("d", edges))
+
+                # Determine a Y histogram range for computing quantiles. Use
+                # provided cfg_y settings if present, otherwise fall back to
+                # reasonable defaults.
+                y_bins = int(cfg_y.get("bins", 600))
+                y_min = float(cfg_y.get("min", 0.0))
+                y_max = float(cfg_y.get("max", 6.0))
+
+                # For each X bin, filter events in that X range, histogram Y,
+                # compute quantiles and set IQR into the output TH1.
+                for i in range(nbins):
+                    left, right = edges[i], edges[i + 1]
+                    if i < nbins - 1:
+                        bin_filter = f"({colx} >= {left}) && ({colx} < {right})"
+                    else:
+                        bin_filter = f"({colx} >= {left}) && ({colx} <= {right})"
+
+                    rdf_bin = rdf.Filter(bin_filter)
+
+                    # Build a temporary Y histogram for quantile computation
+                    y_axis_cfg = {"bins": y_bins, "min": y_min, "max": y_max}
+                    y_axis = AxisFactory.make_1d(f"{hist.name}_ybin{i}", hist.title, y_axis_cfg)
+                    y_res = rdf_bin.Histo1D(y_axis, coly)
+                    y_hist = y_res.GetValue()
+
+                    if y_hist.GetEntries() < 4:
+                        out_hist.SetBinContent(i + 1, 0.0)
+                    else:
+                        # Use the Gaussian ±1σ cumulative probabilities (~0.1586552539 and ~0.8413447461)
+                        # to compute the central 68% width (q84 - q16).
+                        probs = array.array(
+                            "d",
+                            [
+                                0.15865525393145707,
+                                0.5,
+                                0.8413447460685429,
+                            ],
+                        )
+                        qs = array.array("d", [0.0, 0.0, 0.0])
+                        try:
+                            y_hist.GetQuantiles(3, qs, probs)
+                            width68 = qs[2] - qs[0]
+                        except Exception:
+                            width68 = 0.0
+                        out_hist.SetBinContent(i + 1, width68)
+
+                # Wrap the precomputed TH1 into a simple object exposing GetValue()
+                class _ImmediateResult:
+                    def __init__(self, obj: ROOT.TH1):
+                        self._obj = obj
+
+                    def GetValue(self):
+                        return self._obj
+
+                results.append((selection.directory, _ImmediateResult(out_hist)))
+
+            else:
+                # Regular 2D histogram: expect both X and Y axes are fully specified
+                axis = AxisFactory.make_2d(hist.name, hist.title, cfg_x, cfg_y)
+                results.append(
+                    (
+                        selection.directory,
+                        rdf.Histo2D(axis, colx, coly, selection.weight_expr)
+                        if selection.weight_expr.strip() not in {"", "1.0"}
+                        else rdf.Histo2D(axis, colx, coly),
+                    )
                 )
-            )
 
         elif kind == "H3":
             cfg_x, cfg_y, cfg_z = axes["x"], axes["y"], axes["z"]

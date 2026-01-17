@@ -15,7 +15,7 @@
 # cluster_SECOND_TOWER_R
 # cluster_TOWER_PTD
 
-input: "/mnt/nvme0n1p4/HEP/Work/Project-W-Z/MotorHead/quicktree2histo/cluster-tower-moments/root-files/ClusterEnergies_jz2_mc20a_mc20d.root"
+input: "/mnt/nvme0n1p4/HEP/Work/Project-W-Z/MotorHead/quicktree2histo/cluster-tower-moments/root-files/cluster_truth_analysis_jz02_PU_mc20a_mc16e_merged.root"
 
 cluster_histograms: &cluster_histograms
   - name: "cluster_energy_em"
@@ -61,56 +61,56 @@ cluster_histograms: &cluster_histograms
 
 
 outputs:
-  - file: "./output-root-files/cluster_tower_moments_histograms_jz2_mc20a_mc20d.root"
+  - file: "./output-root-files/cluster_tower_moments_tree2hists_jz02_PU_mc20a_mc20e.root"
     selections:
-      - tree: "ClusterMoments"
+      - tree: "ClusterMoments_All"
         filter: "abs(clusterEta) < 2.5"
         dir: "tower_moments/eta0to25"
         hists: *cluster_histograms
       
-      - tree: "ClusterMoments"
+      - tree: "ClusterMoments_All"
         filter: "abs(clusterEta) >= 2.5 && abs(clusterEta) < 3.2"
         dir: "tower_moments/eta25to32"
         hists: *cluster_histograms
       
-      - tree: "ClusterMoments"
+      - tree: "ClusterMoments_All"
         filter: "abs(clusterEta) >= 3.2 && abs(clusterEta) < 4.9"
         dir: "tower_moments/eta32to49"
         hists: *cluster_histograms
       
       # forward region, reconstructed energy slices (MeV)
-      - tree: "ClusterMoments"
+      - tree: "ClusterMoments_All"
         filter: "abs(clusterEta) >= 2.5 && abs(clusterEta) < 4.9 && clusterE >= 10"
         dir: "tower_moments/eta25to49/reco_gt10GeV"
         hists: *cluster_histograms
-      - tree: "ClusterMoments"
+      - tree: "ClusterMoments_All"
         filter: "abs(clusterEta) >= 2.5 && abs(clusterEta) < 4.9 && clusterE >= 5 && clusterE < 10"
         dir: "tower_moments/eta25to49/reco_5to10GeV"
         hists: *cluster_histograms
-      - tree: "ClusterMoments"
+      - tree: "ClusterMoments_All"
         filter: "abs(clusterEta) >= 2.5 && abs(clusterEta) < 4.9 && clusterE >= 2 && clusterE < 5"
         dir: "tower_moments/eta25to49/reco_2to5GeV"
         hists: *cluster_histograms
-      - tree: "ClusterMoments"
+      - tree: "ClusterMoments_All"
         filter: "abs(clusterEta) >= 2.5 && abs(clusterEta) < 4.9 && clusterE >= 0.3 && clusterE < 2"
         dir: "tower_moments/eta25to49/reco_0p3to2GeV"
         hists: *cluster_histograms
 
       # forward region, same slices but with truth energy <0.3 GeV
-      - tree: "ClusterMoments"
-        filter: "abs(clusterEta) >= 2.5 && abs(clusterEta) < 4.9 && clusterE >= 10 && clusterE_Truth < 0.3"
+      - tree: "ClusterMoments_All"
+        filter: "abs(clusterEta) >= 2.5 && abs(clusterEta) < 4.9 && clusterE >= 10 && clusterE_Truth > 0.3"
         dir: "tower_moments/eta25to49/truthLt0p3GeV/reco_gt10GeV"
         hists: *cluster_histograms
-      - tree: "ClusterMoments"
-        filter: "abs(clusterEta) >= 2.5 && abs(clusterEta) < 4.9 && clusterE >= 5 && clusterE < 10 && clusterE_Truth < 0.3"
+      - tree: "ClusterMoments_All"
+        filter: "abs(clusterEta) >= 2.5 && abs(clusterEta) < 4.9 && clusterE >= 5 && clusterE < 10 && clusterE_Truth > 0.3"
         dir: "tower_moments/eta25to49/truthLt0p3GeV/reco_5to10GeV"
         hists: *cluster_histograms
-      - tree: "ClusterMoments"
-        filter: "abs(clusterEta) >= 2.5 && abs(clusterEta) < 4.9 && clusterE >= 2 && clusterE < 5 && clusterE_Truth < 0.3"
+      - tree: "ClusterMoments_All"
+        filter: "abs(clusterEta) >= 2.5 && abs(clusterEta) < 4.9 && clusterE >= 2 && clusterE < 5 && clusterE_Truth > 0.3"
         dir: "tower_moments/eta25to49/truthLt0p3GeV/reco_2to5GeV"
         hists: *cluster_histograms
-      - tree: "ClusterMoments"
-        filter: "abs(clusterEta) >= 2.5 && abs(clusterEta) < 4.9 && clusterE >= 0.3 && clusterE < 2 && clusterE_Truth < 0.3"
+      - tree: "ClusterMoments_All"
+        filter: "abs(clusterEta) >= 2.5 && abs(clusterEta) < 4.9 && clusterE >= 0.3 && clusterE < 2 && clusterE_Truth > 0.3"
         dir: "tower_moments/eta25to49/truthLt0p3GeV/reco_0p3to2GeV"
         hists: *cluster_histograms
 
