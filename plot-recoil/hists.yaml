@@ -142,11 +142,61 @@ common_defines: &common_defines
   - name: "delta_phi_ml"
     expr: "ROOT::Math::VectorUtil::DeltaPhi(ROOT::Math::PtEtaPhiMVector(0,0,mu0.Phi(),0)+ROOT::Math::PtEtaPhiMVector(0,0,mu1.Phi(),0), ROOT::Math::PtEtaPhiMVector(0,0,u_phi.second[19],0))"
 
+cluster_defines_central: &cluster_defines_central
+  - name: "fCluster_rawE_central"
+    expr: "fCluster_rawE[fClusterEta > -2.5 && fClusterEta < 2.5]"
+  - name: "fCluster_calE_central"
+    expr: "fCluster_calE[fClusterEta > -2.5 && fClusterEta < 2.5]"
+  - name: "fCluster_MLE_central"
+    expr: "fCluster_MLE[fClusterEta > -2.5 && fClusterEta < 2.5]"
+  - name: "fCluster_truthE_central"
+    expr: "fCluster_truthE[fClusterEta > -2.5 && fClusterEta < 2.5]"
 
+cluster_histograms_central: &cluster_histograms_central
+  - name: "cluster_energy_em_central"
+    title: "Cluster energy (EM, |eta| < 2.5);E [MeV];Events"
+    x: {expr: "fCluster_rawE_central", bins: 500, min: 0, max: 10000}
+    kind: "H1"
+  - name: "cluster_energy_lc_central"
+    title: "Cluster energy (LC, |eta| < 2.5);E [MeV];Events"
+    x: {expr: "fCluster_calE_central", bins: 500, min: 0, max: 10000}
+    kind: "H1"
+  - name: "cluster_energy_ml_central"
+    title: "Cluster energy (ML, |eta| < 2.5);E [MeV];Events"
+    x: {expr: "fCluster_MLE_central", bins: 500, min: 0, max: 10000}
+    kind: "H1"
+  - name: "cluster_energy_truth_central"
+    title: "Cluster energy (truth, |eta| < 2.5);E [MeV];Events"
+    x: {expr: "fCluster_truthE_central", bins: 500, min: 0, max: 10000}
+    kind: "H1"
 
-cluster_defines: &cluster_defines
-  - name: "cluster_eta"
-    expr: "fClusterEta"
+cluster_defines_forward: &cluster_defines_forward
+  - name: "fCluster_rawE_forward"
+    expr: "fCluster_rawE[fClusterEta < -2.5 || fClusterEta > 2.5]"
+  - name: "fCluster_calE_forward"
+    expr: "fCluster_calE[fClusterEta < -2.5 || fClusterEta > 2.5]"
+  - name: "fCluster_MLE_forward"
+    expr: "fCluster_MLE[fClusterEta < -2.5 || fClusterEta > 2.5]"
+  - name: "fCluster_truthE_forward"
+    expr: "fCluster_truthE[fClusterEta < -2.5 || fClusterEta > 2.5]"
+
+cluster_histograms_forward: &cluster_histograms_forward
+  - name: "cluster_energy_em_forward"
+    title: "Cluster energy (EM, |eta| > 2.5);E [MeV];Events"
+    x: {expr: "fCluster_rawE_forward", bins: 500, min: 0, max: 10000}
+    kind: "H1"
+  - name: "cluster_energy_lc_forward"
+    title: "Cluster energy (LC, |eta| > 2.5);E [MeV];Events"
+    x: {expr: "fCluster_calE_forward", bins: 500, min: 0, max: 10000}
+    kind: "H1"
+  - name: "cluster_energy_ml_forward"
+    title: "Cluster energy (ML, |eta| > 2.5);E [MeV];Events"
+    x: {expr: "fCluster_MLE_forward", bins: 500, min: 0, max: 10000}
+    kind: "H1"
+  - name: "cluster_energy_truth_forward"
+    title: "Cluster energy (truth, |eta| > 2.5);E [MeV];Events"
+    x: {expr: "fCluster_truthE_forward", bins: 500, min: 0, max: 10000}
+    kind: "H1"
 
 cluster_histograms: &cluster_histograms
   # cluster energy distributions
@@ -209,20 +259,48 @@ cluster_histograms: &cluster_histograms
   - name: "cluster_response_vs_truthE_em"
     title: "Cluster response vs truth E (EM);E_{truth} [MeV];E_{reco}/E_{truth}"
     kind: "H2"
-    x: {expr: "fCluster_truthE", bins: 100, min: 0, max: 100000}
-    y: {expr: "fCluster_rawE/fCluster_truthE", bins: 100, min: 0, max: 4}
+    x: {expr: "fCluster_truthE", bins: 1000, min: 0, max: 100000}
+    y: {expr: "fCluster_rawE/fCluster_truthE", bins: 70, min: 0, max: 7}
 
   - name: "cluster_response_vs_truthE_lc"
     title: "Cluster response vs truth E (LC);E_{truth} [MeV];E_{reco}/E_{truth}"
     kind: "H2"
-    x: {expr: "fCluster_truthE", bins: 100, min: 0, max: 100000}
-    y: {expr: "fCluster_calE/fCluster_truthE", bins: 100, min: 0, max: 4}
+    x: {expr: "fCluster_truthE", bins: 1000, min: 0, max: 100000}
+    y: {expr: "fCluster_calE/fCluster_truthE", bins: 70, min: 0, max: 7}
 
   - name: "cluster_response_vs_truthE_ml"
     title: "Cluster response vs truth E (ML);E_{truth} [MeV];E_{reco}/E_{truth}"
     kind: "H2"
-    x: {expr: "fCluster_truthE", bins: 100, min: 0, max: 100000}
-    y: {expr: "fCluster_MLE/fCluster_truthE", bins: 100, min: 0, max: 4}
+    x: {expr: "fCluster_truthE", bins: 1000, min: 0, max: 100000}
+    y: {expr: "fCluster_MLE/fCluster_truthE", bins: 70, min: 0, max: 7}
+
+  # ML energy response as a function of EM energy -- 2D histograms
+  - name: "cluster_ml_response_vs_em_energy"
+    title: "Cluster ML response vs EM energy;E_{EM} [MeV];E_{ML}/E_{truth}"
+    kind: "H2"
+    x: {expr: "fCluster_rawE", bins: 1000, min: 0, max: 100000}
+    y: {expr: "fCluster_MLE/fCluster_truthE", bins: 70, min: 0, max: 7}
+
+  # 2D plot of EM, LCW, ML energy vs truth energy
+  - name: "cluster_ml_energy_vs_truthE"
+    title: "Cluster ML energy vs truth E;E_{truth} [MeV];E_{ML} [MeV]"
+    kind: "H2"
+    x: {expr: "fCluster_truthE", bins: 1000, min: 0, max: 100000}
+    y: {expr: "fCluster_MLE", bins: 1000, min: 0, max: 100000}
+
+  - name: "cluster_lc_energy_vs_truthE"
+    title: "Cluster LC energy vs truth E;E_{truth} [MeV];E_{LC} [MeV]"
+    kind: "H2"
+    x: {expr: "fCluster_truthE", bins: 1000, min: 0, max: 100000}
+    y: {expr: "fCluster_calE", bins: 1000, min: 0, max: 100000}
+
+  - name: "cluster_em_energy_vs_truthE"
+    title: "Cluster EM energy vs truth E;E_{truth} [MeV];E_{EM} [MeV]"
+    kind: "H2"
+    x: {expr: "fCluster_truthE", bins: 1000, min: 0, max: 100000}
+    y: {expr: "fCluster_rawE", bins: 1000, min: 0, max: 100000}
+
+
 
   # cluster resolution
   - name: "cluster_resolution_em"
@@ -706,51 +784,20 @@ outputs:
     #compression: "LZ4:4"            # optional ROOT compression (algo:level)
     selections:
       - tree: "treeAnaWZ"
-        defines: *cluster_defines
-        #filter: "mu_pt.size() > 1 && cluster_eta > -2.5 && cluster_eta < 2.5"
+        #filter: "mu_pt.size() > 1"
         dir: "clusters/all"
         hists: *cluster_histograms
 
-      - tree: "treeAnaWZ"
-        #filter: "mu_pt.size() > 1 && z_pt >= 30 && z_pt < 60 && std::abs(z_eta) < 1.0"
-        filter: "mu_pt.size() > 1 && z_pt >= 30 && z_pt < 60 "
-        dir: "recoil/zpt30to60_eta0to1"
-        defines: *common_defines
-        hists: *common_histograms
 
-      - tree: "treeAnaWZ"
-        #filter: "mu_pt.size() > 1 && z_pt >= 60 && z_pt < 90 && std::abs(z_eta) < 1.0"
-        filter: "mu_pt.size() > 1 && z_pt >= 60 && z_pt < 90 "
-        dir: "recoil/zpt60to90_eta0to1"
-        defines: *common_defines
-        hists: *common_histograms
+      #- tree: "treeAnaWZ"
+      #  defines: *common_defines
+      #  filter: "mu_pt.size() > 1"
+      #  dir: "clusters/all"
+      #  hists: *common_histograms
 
-      - tree: "treeAnaWZ"
-        #filter: "mu_pt.size() > 1 && z_pt >= 90 && z_pt < 120 && std::abs(z_eta) < 1.0"
-        filter: "mu_pt.size() > 1 && z_pt >= 90 && z_pt < 120 "
-        dir: "recoil/zpt90to120_eta0to1"
-        defines: *common_defines
-        hists: *common_histograms
-
-      - tree: "treeAnaWZ"
-        #filter: "mu_pt.size() > 1 && z_pt >= 120 && z_pt < 150 && std::abs(z_eta) < 1.0"
-        filter: "mu_pt.size() > 1 && z_pt >= 120 && z_pt < 150"
-        dir: "recoil/zpt120to150_eta0to1"
-        defines: *common_defines
-        hists: *common_histograms
-
-      - tree: "treeAnaWZ"
-        #filter: "mu_pt.size() > 1 && z_pt >= 150 && z_pt < 200 && std::abs(z_eta) < 1.0"
-        filter: "mu_pt.size() > 1 && z_pt >= 150 && z_pt < 200"
-        dir: "recoil/zpt150to200_eta0to1"
-        defines: *common_defines
-        hists: *common_histograms
-
-
-      - tree: "treeAnaWZ"              # can be "dir/subdir/Events"
-        filter: "mu_pt.size() == 1"      # keep events with at least one muon
-        #weight: "genWeight"         # optional weight expression; defaults to "1.0"
-        dir: "recoil/all"                # optional subdirectory in output file
-        defines: *common_defines        # common defines for all selections
-
-        hists: *common_histograms   # common histograms for all selections
+      #- tree: "treeAnaWZ"              # can be "dir/subdir/Events"
+      #  filter: "mu_pt.size() == 1"      # keep events with at least one muon
+      #  #weight: "genWeight"         # optional weight expression; defaults to "1.0"
+      #  dir: "recoil/all"                # optional subdirectory in output file
+      #  defines: *common_defines        # common defines for all selections
+      #  hists: *common_histograms   # common histograms for all selections

@@ -1,0 +1,116 @@
+
+###
+## Information
+## clusterE, clusterE_Truth is in GeV unitts
+##
+## ==============================
+## Cluster tower moments
+## ==============================
+
+# cluster_FIRST_TOWER_PHI
+# cluster_FIRST_TOWER_ETA
+# cluster_SECOND_TOWER_PHI
+# cluster_SECOND_TOWER_ETA
+# cluster_FIRST_TOWER_R
+# cluster_SECOND_TOWER_R
+# cluster_TOWER_PTD
+
+input: "/mnt/nvme0n1p4/HEP/Work/Project-W-Z/MotorHead/quicktree2histo/cluster-tower-moments/root-files/cluster_truth_analysis_jz02_PU_mc20a_mc16e_merged.root"
+
+cluster_histograms: &cluster_histograms
+  - name: "cluster_energy_em"
+    title: "Cluster energy (EM);E [MeV];Events"
+    x: {expr: "clusterE", bins: 200, min: 0, max: 20000}
+    kind: "H1"
+  - name: "cluster_energy_lc"
+    title: "Cluster energy (LC);E [MeV];Events"
+    x: {expr: "clusterE_LCW", bins: 200, min: 0, max: 20000}
+    kind: "H1"
+  - name: "cluster_energy_truth"
+    title: "Cluster energy (truth);E [MeV];Events"
+    x: {expr: "clusterE_Truth", bins: 200, min: 0, max: 20000}
+    kind: "H1"
+  - name: "cluster_first_tower_phi"
+    title: "Cluster first tower phi ;phi;Events"
+    x: {expr: "cluster_FIRST_TOWER_PHI", bins: 64, min: -3.2, max: 3.2}
+    kind: "H1"
+  - name: "cluster_first_tower_eta"
+    title: "Cluster first tower eta ;eta;Events"
+    x: {expr: "cluster_FIRST_TOWER_ETA", bins: 100, min: -5.0, max: 5.0}
+    kind: "H1"
+  - name: "cluster_second_tower_phi"
+    title: "Cluster second tower phi ;phi;Events"
+    x: {expr: "cluster_SECOND_TOWER_PHI", bins: 100, min: -10e-15, max: 10e-15}
+    kind: "H1"
+  - name: "cluster_second_tower_eta"
+    title: "Cluster second tower eta ;eta;Events"
+    x: {expr: "cluster_SECOND_TOWER_ETA", bins: 100, min: -10e-15, max: 10e-15} 
+    kind: "H1"
+  - name: "cluster_first_tower_r"
+    title: "Cluster first tower R ;R ;Events"
+    x: {expr: "cluster_FIRST_TOWER_R", bins: 150, min: 0, max: 0.15}
+    kind: "H1"
+  - name: "cluster_second_tower_r"
+    title: "Cluster second tower R ;R ;Events"
+    x: {expr: "cluster_SECOND_TOWER_R", bins: 150, min: 0, max: 0.15}
+    kind: "H1"
+  - name: "cluster_tower_ptd"
+    title: "Cluster tower PTD ;PTD;Events"
+    x: {expr: "cluster_TOWER_PTD", bins: 100, min: 0, max: 1}
+    kind: "H1"
+
+
+outputs:
+  - file: "./output-root-files/cluster_tower_moments_tree2hists_jz02_PU_mc20a_mc20e.root"
+    selections:
+      - tree: "ClusterMoments_All"
+        filter: "abs(clusterEta) < 2.5"
+        dir: "tower_moments/eta0to25"
+        hists: *cluster_histograms
+      
+      - tree: "ClusterMoments_All"
+        filter: "abs(clusterEta) >= 2.5 && abs(clusterEta) < 3.2"
+        dir: "tower_moments/eta25to32"
+        hists: *cluster_histograms
+      
+      - tree: "ClusterMoments_All"
+        filter: "abs(clusterEta) >= 3.2 && abs(clusterEta) < 4.9"
+        dir: "tower_moments/eta32to49"
+        hists: *cluster_histograms
+      
+      # forward region, reconstructed energy slices (MeV)
+      - tree: "ClusterMoments_All"
+        filter: "abs(clusterEta) >= 2.5 && abs(clusterEta) < 4.9 && clusterE >= 10"
+        dir: "tower_moments/eta25to49/reco_gt10GeV"
+        hists: *cluster_histograms
+      - tree: "ClusterMoments_All"
+        filter: "abs(clusterEta) >= 2.5 && abs(clusterEta) < 4.9 && clusterE >= 5 && clusterE < 10"
+        dir: "tower_moments/eta25to49/reco_5to10GeV"
+        hists: *cluster_histograms
+      - tree: "ClusterMoments_All"
+        filter: "abs(clusterEta) >= 2.5 && abs(clusterEta) < 4.9 && clusterE >= 2 && clusterE < 5"
+        dir: "tower_moments/eta25to49/reco_2to5GeV"
+        hists: *cluster_histograms
+      - tree: "ClusterMoments_All"
+        filter: "abs(clusterEta) >= 2.5 && abs(clusterEta) < 4.9 && clusterE >= 0.3 && clusterE < 2"
+        dir: "tower_moments/eta25to49/reco_0p3to2GeV"
+        hists: *cluster_histograms
+
+      # forward region, same slices but with truth energy <0.3 GeV
+      - tree: "ClusterMoments_All"
+        filter: "abs(clusterEta) >= 2.5 && abs(clusterEta) < 4.9 && clusterE >= 10 && clusterE_Truth > 0.3"
+        dir: "tower_moments/eta25to49/truthLt0p3GeV/reco_gt10GeV"
+        hists: *cluster_histograms
+      - tree: "ClusterMoments_All"
+        filter: "abs(clusterEta) >= 2.5 && abs(clusterEta) < 4.9 && clusterE >= 5 && clusterE < 10 && clusterE_Truth > 0.3"
+        dir: "tower_moments/eta25to49/truthLt0p3GeV/reco_5to10GeV"
+        hists: *cluster_histograms
+      - tree: "ClusterMoments_All"
+        filter: "abs(clusterEta) >= 2.5 && abs(clusterEta) < 4.9 && clusterE >= 2 && clusterE < 5 && clusterE_Truth > 0.3"
+        dir: "tower_moments/eta25to49/truthLt0p3GeV/reco_2to5GeV"
+        hists: *cluster_histograms
+      - tree: "ClusterMoments_All"
+        filter: "abs(clusterEta) >= 2.5 && abs(clusterEta) < 4.9 && clusterE >= 0.3 && clusterE < 2 && clusterE_Truth > 0.3"
+        dir: "tower_moments/eta25to49/truthLt0p3GeV/reco_0p3to2GeV"
+        hists: *cluster_histograms
+

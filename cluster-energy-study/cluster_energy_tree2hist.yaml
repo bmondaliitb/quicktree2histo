@@ -1,0 +1,174 @@
+
+input: "/mnt/nvme0n1p4/HEP/Work/Project-W-Z/MotorHead/quicktree2histo/cluster-energy-study/root-files/outTree_zmumu_withPU_merged_v1.root"
+
+
+# cluster histograms in eta [-2.5, 2.5]
+cluster_defines_eta0to25: &cluster_defines_eta0to25
+  - name: "fCluster_rawE_eta0to25"
+    expr: "fCluster_rawE[abs(fClusterEta) > 0 && abs(fClusterEta) < 2.5]"
+  - name: "fCluster_calE_eta0to25"
+    expr: "fCluster_calE[abs(fClusterEta) > 0 && abs(fClusterEta) < 2.5]"
+  - name: "fCluster_MLE_eta0to25"
+    expr: "fCluster_MLE[abs(fClusterEta) > 0 && abs(fClusterEta) < 2.5]"
+  - name: "fCluster_truthE_eta0to25"
+    expr: "fCluster_truthE[abs(fClusterEta) > 0 && abs(fClusterEta) < 2.5]"
+
+cluster_histograms_eta0to25: &cluster_histograms_eta0to25
+  - name: "cluster_energy_em_eta0to25"
+    title: "Cluster energy (EM, |eta| < 2.5);E [MeV];Events"
+    x: {expr: "fCluster_rawE_eta0to25", bins: 500, min: 0, max: 10000}
+    kind: "H1"
+  - name: "cluster_energy_lc_eta0to25"
+    title: "Cluster energy (LC, |eta| < 2.5);E [MeV];Events"
+    x: {expr: "fCluster_calE_eta0to25", bins: 500, min: 0, max: 10000}
+    kind: "H1"
+  - name: "cluster_energy_ml_eta0to25"
+    title: "Cluster energy (ML, |eta| < 2.5);E [MeV];Events"
+    x: {expr: "fCluster_MLE_eta0to25", bins: 500, min: 0, max: 10000}
+    kind: "H1"
+  - name: "cluster_energy_truth_eta0to25"
+    title: "Cluster energy (truth, |eta| < 2.5);E [MeV];Events"
+    x: {expr: "fCluster_truthE_eta0to25", bins: 500, min: 0, max: 10000}
+    kind: "H1"
+  - name: "cluster_eta_eta0to25"
+    title: "Cluster eta (|eta| < 2.5);#eta;Events"
+    x: {expr: "fClusterEta[fClusterEta > -2.5 && fClusterEta < 2.5]", bins: 100, min: -5.0, max: 5.0}
+    kind: "H1"
+  
+  # 2D scatter plot of EM vs truth, LC vs truth, ML vs truth
+  - name: "cluster_em_energy_vs_truthE_eta0to25"
+    title: "Cluster EM energy vs truth E (|eta| < 2.5);E_{truth} [MeV];E_{EM} [MeV]"
+    kind: "H2"
+    x: {expr: "fCluster_truthE_eta0to25", bins: 1000, min: 0, max: 100000}
+    y: {expr: "fCluster_rawE_eta0to25", bins: 1000, min: 0, max: 100000}
+  - name: "cluster_lc_energy_vs_truthE_eta0to25"
+    title: "Cluster LC energy vs truth E (|eta| < 2.5);E_{truth} [MeV];E_{LC} [MeV]"
+    kind: "H2"
+    x: {expr: "fCluster_truthE_eta0to25", bins: 1000, min: 0, max: 100000}
+    y: {expr: "fCluster_calE_eta0to25", bins: 1000, min: 0, max: 100000}
+  - name: "cluster_ml_energy_vs_truthE_eta0to25"
+    title: "Cluster ML energy vs truth E (|eta| < 2.5);E_{truth} [MeV];E_{ML} [MeV]"
+    kind: "H2"
+    x: {expr: "fCluster_truthE_eta0to25", bins: 1000, min: 0, max: 100000}
+    y: {expr: "fCluster_MLE_eta0to25", bins: 1000, min: 0, max: 100000}
+
+
+# cluster histograms in eta [2.5, 3.2]
+cluster_defines_eta25to32: &cluster_defines_eta25to32
+  - name: "fCluster_rawE_eta25to32"
+    expr: "fCluster_rawE[abs(fClusterEta) >= 2.5 && abs(fClusterEta) < 3.2]"
+  - name: "fCluster_calE_eta25to32"
+    expr: "fCluster_calE[abs(fClusterEta) >= 2.5 && abs(fClusterEta) < 3.2]"
+  - name: "fCluster_MLE_eta25to32"
+    expr: "fCluster_MLE[abs(fClusterEta) >= 2.5 && abs(fClusterEta) < 3.2]"
+  - name: "fCluster_truthE_eta25to32"
+    expr: "fCluster_truthE[abs(fClusterEta) >= 2.5 && abs(fClusterEta) < 3.2]"
+cluster_histograms_eta25to32: &cluster_histograms_eta25to32
+  - name: "cluster_energy_em_eta25to32"
+    title: "Cluster energy (EM, 2.5 < |eta| < 3.2);E [MeV];Events"
+    x: {expr: "fCluster_rawE_eta25to32", bins: 500, min: 0, max: 10000}
+    kind: "H1"
+  - name: "cluster_energy_lc_eta25to32"
+    title: "Cluster energy (LC, 2.5 < |eta| < 3.2);E [MeV];Events"
+    x: {expr: "fCluster_calE_eta25to32", bins: 500, min: 0, max: 10000}
+    kind: "H1"
+  - name: "cluster_energy_ml_eta25to32"
+    title: "Cluster energy (ML, 2.5 < |eta| < 3.2);E [MeV];Events"
+    x: {expr: "fCluster_MLE_eta25to32", bins: 500, min: 0, max: 10000}
+    kind: "H1"
+  - name: "cluster_energy_truth_eta25to32"
+    title: "Cluster energy (truth, 2.5 < |eta| < 3.2);E [MeV];Events"
+    x: {expr: "fCluster_truthE_eta25to32", bins: 500, min: 0, max: 10000}
+    kind: "H1"
+  - name: "cluster_eta_eta25to32"
+    title: "Cluster eta (2.5 < |eta| < 3.2);#eta;Events"
+    x: {expr: "fClusterEta[abs(fClusterEta) >= 2.5 && abs(fClusterEta) < 3.2]", bins: 100, min: -5.0, max: 5.0}
+    kind: "H1"
+
+  # 2D scatter plot of EM vs truth, LC vs truth, ML vs truth
+  - name: "cluster_em_energy_vs_truthE_eta25to32"
+    title: "Cluster EM energy vs truth E (2.5 < |eta| < 3.2);E_{truth} [MeV];E_{EM} [MeV]"
+    kind: "H2"
+    x: {expr: "fCluster_truthE_eta25to32", bins: 1000, min: 0, max: 100000}
+    y: {expr: "fCluster_rawE_eta25to32", bins: 1000, min: 0, max: 100000}
+  - name: "cluster_lc_energy_vs_truthE_eta25to32"
+    title: "Cluster LC energy vs truth E (2.5 < |eta| < 3.2);E_{truth} [MeV];E_{LC} [MeV]"
+    kind: "H2"
+    x: {expr: "fCluster_truthE_eta25to32", bins: 1000, min: 0, max: 100000}
+    y: {expr: "fCluster_calE_eta25to32", bins: 1000, min: 0, max: 100000}
+  - name: "cluster_ml_energy_vs_truthE_eta25to32"
+    title: "Cluster ML energy vs truth E (2.5 < |eta| < 3.2);E_{truth} [MeV];E_{ML} [MeV]"
+    kind: "H2"
+    x: {expr: "fCluster_truthE_eta25to32", bins: 1000, min: 0, max: 100000}
+    y: {expr: "fCluster_MLE_eta25to32", bins: 1000, min: 0, max: 100000}
+
+
+# cluster histograms in eta [3.2, 4.9]
+cluster_defines_eta32to49: &cluster_defines_eta32to49
+  - name: "fCluster_rawE_eta32to49"
+    expr: "fCluster_rawE[abs(fClusterEta) >= 3.2 && abs(fClusterEta) < 4.9]"
+  - name: "fCluster_calE_eta32to49"
+    expr: "fCluster_calE[abs(fClusterEta) >= 3.2 && abs(fClusterEta) < 4.9]"
+  - name: "fCluster_MLE_eta32to49"
+    expr: "fCluster_MLE[abs(fClusterEta) >= 3.2 && abs(fClusterEta) < 4.9]"
+  - name: "fCluster_truthE_eta32to49"
+    expr: "fCluster_truthE[abs(fClusterEta) >= 3.2 && abs(fClusterEta) < 4.9]"
+cluster_histograms_eta32to49: &cluster_histograms_eta32to49
+  - name: "cluster_energy_em_eta32to49"
+    title: "Cluster energy (EM, 3.2 < |eta| < 4.9);E [MeV];Events"
+    x: {expr: "fCluster_rawE_eta32to49", bins: 500, min: 0, max: 10000}
+    kind: "H1"
+  - name: "cluster_energy_lc_eta32to49"
+    title: "Cluster energy (LC, 3.2 < |eta| < 4.9);E [MeV];Events"
+    x: {expr: "fCluster_calE_eta32to49", bins: 500, min: 0, max: 10000}
+    kind: "H1"
+  - name: "cluster_energy_ml_eta32to49"
+    title: "Cluster energy (ML, 3.2 < |eta| < 4.9);E [MeV];Events"
+    x: {expr: "fCluster_MLE_eta32to49", bins: 500, min: 0, max: 10000}
+    kind: "H1"
+  - name: "cluster_energy_truth_eta32to49"
+    title: "Cluster energy (truth, 3.2 < |eta| < 4.9);E [MeV];Events"
+    x: {expr: "fCluster_truthE_eta32to49", bins: 500, min: 0, max: 10000}
+    kind: "H1"
+  - name: "cluster_eta_eta32to49"
+    title: "Cluster eta (3.2 < |eta| < 4.9);#eta;Events"
+    x: {expr: "fClusterEta[abs(fClusterEta) >= 3.2 && abs(fClusterEta) < 4.9]", bins: 100, min: -5.0, max: 5.0}
+    kind: "H1"
+
+  # 2D scatter plot of EM vs truth, LC vs truth, ML vs truth
+  - name: "cluster_em_energy_vs_truthE_eta32to49"
+    title: "Cluster EM energy vs truth E (3.2 < |eta| < 4.9);E_{truth} [MeV];E_{EM} [MeV]"
+    kind: "H2"
+    x: {expr: "fCluster_truthE_eta32to49", bins: 1000, min: 0, max: 100000}
+    y: {expr: "fCluster_rawE_eta32to49", bins: 1000, min: 0, max: 100000}
+  - name: "cluster_lc_energy_vs_truthE_eta32to49"
+    title: "Cluster LC energy vs truth E (3.2 < |eta| < 4.9);E_{truth} [MeV];E_{LC} [MeV]"
+    kind: "H2"
+    x: {expr: "fCluster_truthE_eta32to49", bins: 1000, min: 0, max: 100000}
+    y: {expr: "fCluster_calE_eta32to49", bins: 1000, min: 0, max: 100000}
+  - name: "cluster_ml_energy_vs_truthE_eta32to49"
+    title: "Cluster ML energy vs truth E (3.2 < |eta| < 4.9);E_{truth} [MeV];E_{ML} [MeV]"
+    kind: "H2"
+    x: {expr: "fCluster_truthE_eta32to49", bins: 1000, min: 0, max: 100000}
+    y: {expr: "fCluster_MLE_eta32to49", bins: 1000, min: 0, max: 100000}
+
+
+
+outputs:
+  - file: "./output-root-files/output_zmumu_withPU_v1.root"
+    selections:
+      - tree: "treeAnaWZ"
+        #filter: "mu_pt.size() > 1"
+        dir: "clusters/eta0to25"
+        defines: *cluster_defines_eta0to25
+        hists: *cluster_histograms_eta0to25
+      
+      - tree: "treeAnaWZ"
+        dir: "clusters/eta25to32"
+        defines: *cluster_defines_eta25to32
+        hists: *cluster_histograms_eta25to32
+      
+      - tree: "treeAnaWZ"
+        dir: "clusters/eta32to49"
+        defines: *cluster_defines_eta32to49
+        hists: *cluster_histograms_eta32to49

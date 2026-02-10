@@ -1,0 +1,160 @@
+
+###
+## Information
+## clusterE, clusterE_Truth is in GeV unitts
+##
+## ==============================
+## 
+## ==============================
+
+# Tree: ClusterMoments
+## *Br    0 :clusterE: clusterE/D                                          *                                                                                                      
+## ............................................................................*                                                                                                      
+## *Br    1 :clusterEta : clusterEta/D                                          *                                                                                                      
+## *............................................................................*                                                                                                      
+## *Br    2 :cluster_SIGNIFICANCE : cluster_SIGNIFICANCE/D                      *                                                                                                      
+## *............................................................................*                                                                                                      
+## *Br    3 :cluster_time : cluster_time/D                                      *                                                                                                      
+## *............................................................................*                                                                                                      
+## *Br    4 :cluster_SECOND_TIME : cluster_SECOND_TIME/D                        *                                                                                                      
+## *............................................................................*                                                                                                      
+## *Br    5 :cluster_CENTER_LAMBDA : cluster_CENTER_LAMBDA/D                    *                                                                                                      
+## *............................................................................*                                                                                                      
+## *Br    6 :cluster_CENTER_MAG : cluster_CENTER_MAG/D                          *                                                                                                      
+## *............................................................................*                                                                                                      
+## *Br    7 :cluster_ENG_FRAC_EM_INCL : cluster_ENG_FRAC_EM_INCL/D              *                                                                                                      
+## *............................................................................*                                                                                                      
+## *Br    8 :cluster_FIRST_ENG_DENS : cluster_FIRST_ENG_DENS/D                  *
+## *............................................................................*
+## *Br    9 :cluster_LONGITUDINAL : cluster_LONGITUDINAL/D                      *
+## *............................................................................*
+## *Br   10 :cluster_LATERAL : cluster_LATERAL/D                                *
+## *............................................................................*
+## *Br   11 :cluster_PTD : cluster_PTD/D                                        *
+## *............................................................................*
+## *Br   12 :cluster_ISOLATION : cluster_ISOLATION/D                            *
+## *............................................................................*
+## *Br   13 :nPrimVtx  : nPrimVtx/I                                             *
+## *............................................................................*
+## *Br   14 :avgMu     : avgMu/F                                                *
+## *............................................................................*
+## *Br   15 :clusterE_LCW : clusterE_LCW/D                                      *        
+## *............................................................................*
+## *Br   16 :clusterE_Truth : clusterE_Truth/D                                  *
+## 
+
+
+input: "/mnt/nvme0n1p4/HEP/Work/Project-W-Z/MotorHead/quicktree2histo/cluster-inside-outside-jet/root-files/cluster_truth_analysis_jz02_withPU_merged.root" # jz02 with PU 
+#input: "/mnt/nvme0n1p4/HEP/Work/Project-W-Z/MotorHead/quicktree2histo/cluster-inside-outside-jet/root-files/cluster_truth_analysis_jz02_noPU_merged.root" # jz02 noPU 
+#input: "/mnt/nvme0n1p4/HEP/Work/Project-W-Z/MotorHead/quicktree2histo/cluster-inside-outside-jet/root-files/cluster_truth_analysis_zmumu_withPU_merged.root" # zmumu PU 
+
+cluster_histograms: &cluster_histograms
+  # make histograms for various cluster moments
+  - name: "cluster_e"
+    title: "Cluster energy;Energy [GeV];Events"
+    x: {expr: "clusterE", bins: 100, min: 0, max: 50}
+    kind: "H1"
+  - name: "cluster_eta"
+    title: "Cluster eta;#eta;Events"
+    x: {expr: "clusterEta", bins: 50, min: -5, max: 5}
+    kind: "H1"
+  - name: "cluster_significance"
+    title: "Cluster significance;Significance;Events"
+    x: {expr: "cluster_SIGNIFICANCE", bins: 50, min: 0, max: 50}
+    kind: "H1"
+  - name: "cluster_time"
+    title: "Cluster time;Time [ns];Events"
+    x: {expr: "cluster_time", bins: 100, min: -10, max: 10}
+    kind: "H1"
+  - name: "cluster_second_time"
+    title: "Cluster second time;Second Time [ns];Events"
+    x: {expr: "cluster_SECOND_TIME", bins: 1000, min: 0, max: 20000}
+    kind: "H1"
+  - name: "cluster_center_lambda"
+    title: "Cluster center lambda;Center #lambda;Events"
+    x: {expr: "cluster_CENTER_LAMBDA", bins: 500, min: 0, max: 7000}
+    kind: "H1"
+  - name: "cluster_center_mag"
+    title: "Cluster center mag;Center Mag;Events"
+    x: {expr: "cluster_CENTER_MAG", bins: 500, min: 0, max: 7000}
+    kind: "H1"
+  - name: "cluster_eng_frac_em_incl"
+    title: "Cluster EM energy fraction;EM Energy Fraction;Events"
+    x: {expr: "cluster_ENG_FRAC_EM_INCL", bins: 100, min: 0, max: 1}
+    kind: "H1"
+  - name: "cluster_first_eng_dens"
+    title: "Cluster first energy density;First Energy Density [GeV];Events"
+    x: {expr: "cluster_FIRST_ENG_DENS", bins: 1000, min: 0, max: 0.004}
+    kind: "H1"
+  - name: "cluster_longitudinal"
+    title: "Cluster longitudinal moment;Longitudinal Moment;Events"
+    x: {expr: "cluster_LONGITUDINAL", bins: 100, min: 0, max: 1}
+    kind: "H1"
+  - name: "cluster_lateral"
+    title: "Cluster lateral moment;Lateral Moment;Events"
+    x: {expr: "cluster_LATERAL", bins: 100, min: 0, max: 1}
+    kind: "H1"
+  - name: "cluster_ptd"
+    title: "Cluster PTD;PTD;Events"
+    x: {expr: "cluster_PTD", bins: 100, min: 0, max: 1}
+    kind: "H1"
+  - name: "cluster_isolation"
+    title: "Cluster isolation;Isolation;Events"
+    x: {expr: "cluster_ISOLATION", bins: 100, min: 0, max: 1}
+    kind: "H1"
+  - name: "cluster_e_lcw"
+    title: "Cluster energy in LCW;Energy [GeV];Events"
+    x: {expr: "clusterE_LCW", bins: 100, min: 0, max: 50}
+    kind: "H1"
+  - name: "cluster_e_truth"
+    title: "Cluster energy in Truth;Energy [GeV];Events"
+    x: {expr: "clusterE_Truth", bins: 100, min: 0, max: 50}
+    kind: "H1"
+  - name: "cluster_closestDeltaR"
+    title: "Cluster closest DeltaR to jet;#DeltaR;Events"
+    x: {expr: "cluster_closestDeltaR", bins: 100, min: 0, max: 1}
+    kind: "H1"
+
+  # 2d histograms of cluster energy vs truth energy
+  - name: "cluster_e_vs_truth"
+    title: "Cluster energy vs truth;E_{truth} [GeV];E_{reco} [GeV]"
+    x: {expr: "clusterE_Truth", bins: 500, min: 0, max: 50}
+    y: {expr: "clusterE", bins: 500, min: 0, max: 50}
+    kind: "H2"
+
+histograms_additional: &histograms_additional
+  - name: "n_prim_vtx"
+    title: "Number of primary vertices;N_{PrimVtx};Events"
+    x: {expr: "nPrimVtx", bins: 50, min: 0, max: 50}
+    kind: "H1"
+  - name: "avg_mu"
+    title: "Average interactions per bunch crossing;#mu;Events"
+    x: {expr: "avgMu", bins: 50, min: 0, max: 50}
+    kind: "H1"
+
+
+outputs:
+  - file: "./output-root-files/cluster_moments_tree2hist_jz02_withPU.root"
+  #- file: "./output-root-files/cluster_moments_tree2hist_jz02_noPU.root"
+  #- file: "./output-root-files/cluster_moments_tree2hist_zmumu_withPU.root"
+    selections:
+      - tree: "ClusterMoments_InJet"
+        dir: "cluster_moments/in_jet"
+        hists: *cluster_histograms
+      - tree: "ClusterMoments_OutJet"
+        dir: "cluster_moments/out_jet"
+        hists: *cluster_histograms
+      - tree: "ClusterMoments_InJet"
+        filter: "cluster_ISOLATION > 0.8"
+        dir: "cluster_moments/in_jet_filtered"
+        hists: *cluster_histograms
+      - tree: "ClusterMoments_OutJet"
+        filter: "cluster_ISOLATION > 0.8"
+        dir: "cluster_moments/out_jet_filtered"
+        hists: *cluster_histograms
+      - tree: "ClusterMoments_All"
+        dir: "cluster_moments/all_clusters"
+        #hists: *cluster_histograms
+        hists: *histograms_additional
+
+

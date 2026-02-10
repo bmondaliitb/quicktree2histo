@@ -1,0 +1,328 @@
+
+###
+## Information
+## clusterE, clusterE_Truth is in GeV unitts
+##
+## ==============================
+## 
+## ==============================
+
+# Tree: ClusterMoments
+## *Br    0 :clusterE: clusterE/D                                          *                                                                                                      
+## ............................................................................*                                                                                                      
+## *Br    1 :clusterEta : clusterEta/D                                          *                                                                                                      
+## *............................................................................*                                                                                                      
+## *Br    2 :cluster_SIGNIFICANCE : cluster_SIGNIFICANCE/D                      *                                                                                                      
+## *............................................................................*                                                                                                      
+## *Br    3 :cluster_time : cluster_time/D                                      *                                                                                                      
+## *............................................................................*                                                                                                      
+## *Br    4 :cluster_SECOND_TIME : cluster_SECOND_TIME/D                        *                                                                                                      
+## *............................................................................*                                                                                                      
+## *Br    5 :cluster_CENTER_LAMBDA : cluster_CENTER_LAMBDA/D                    *                                                                                                      
+## *............................................................................*                                                                                                      
+## *Br    6 :cluster_CENTER_MAG : cluster_CENTER_MAG/D                          *                                                                                                      
+## *............................................................................*                                                                                                      
+## *Br    7 :cluster_ENG_FRAC_EM_INCL : cluster_ENG_FRAC_EM_INCL/D              *                                                                                                      
+## *............................................................................*                                                                                                      
+## *Br    8 :cluster_FIRST_ENG_DENS : cluster_FIRST_ENG_DENS/D                  *
+## *............................................................................*
+## *Br    9 :cluster_LONGITUDINAL : cluster_LONGITUDINAL/D                      *
+## *............................................................................*
+## *Br   10 :cluster_LATERAL : cluster_LATERAL/D                                *
+## *............................................................................*
+## *Br   11 :cluster_PTD : cluster_PTD/D                                        *
+## *............................................................................*
+## *Br   12 :cluster_ISOLATION : cluster_ISOLATION/D                            *
+## *............................................................................*
+## *Br   13 :nPrimVtx  : nPrimVtx/I                                             *
+## *............................................................................*
+## *Br   14 :avgMu     : avgMu/F                                                *
+## *............................................................................*
+## *Br   15 :clusterE_LCW : clusterE_LCW/D                                      *        
+## *............................................................................*
+## *Br   16 :clusterE_Truth : clusterE_Truth/D                                  *
+## 
+
+
+input: "/mnt/nvme0n1p4/HEP/Work/Project-W-Z/MotorHead/quicktree2histo/cluster-inside-outside-jet/root-files/cluster_truth_analysis_jz02_PU_mc20a_mc20e_merged.root" # jz02 with PU mc20a_mc20e
+
+cluster_histograms: &cluster_histograms
+  # make histograms for various cluster moments
+  - name: "cluster_e"
+    title: "Cluster energy;Energy [GeV];Events"
+    x: {expr: "clusterE", bins: 100, min: 0, max: 50}
+    kind: "H1"
+  - name: "cluster_e_ml"
+    title: "Cluster energy (ML);Energy [GeV];Events"
+    x: {expr: "clusterE_ML", bins: 100, min: 0, max: 50}
+    kind: "H1"
+  - name: "cluster_eta"
+    title: "Cluster eta;#eta;Events"
+    x: {expr: "clusterEta", bins: 50, min: -5, max: 5}
+    kind: "H1"
+  - name: "cluster_significance"
+    title: "Cluster significance;Significance;Events"
+    x: {expr: "cluster_SIGNIFICANCE", bins: 50, min: 0, max: 50}
+    kind: "H1"
+  - name: "cluster_time"
+    title: "Cluster time;Time [ns];Events"
+    x: {expr: "cluster_time", bins: 100, min: -10, max: 10}
+    kind: "H1"
+  - name: "cluster_second_time"
+    title: "Cluster second time;Second Time [ns];Events"
+    x: {expr: "cluster_SECOND_TIME", bins: 1000, min: 0, max: 20000}
+    kind: "H1"
+  - name: "cluster_center_lambda"
+    title: "Cluster center lambda;Center #lambda;Events"
+    x: {expr: "cluster_CENTER_LAMBDA", bins: 500, min: 0, max: 7000}
+    kind: "H1"
+  - name: "cluster_center_mag"
+    title: "Cluster center mag;Center Mag;Events"
+    x: {expr: "cluster_CENTER_MAG", bins: 500, min: 0, max: 7000}
+    kind: "H1"
+  - name: "cluster_eng_frac_em_incl"
+    title: "Cluster EM energy fraction;EM Energy Fraction;Events"
+    x: {expr: "cluster_ENG_FRAC_EM_INCL", bins: 100, min: 0, max: 1}
+    kind: "H1"
+  - name: "cluster_first_eng_dens"
+    title: "Cluster first energy density;First Energy Density [GeV];Events"
+    x: {expr: "cluster_FIRST_ENG_DENS", bins: 1000, min: 0, max: 0.004}
+    kind: "H1"
+  - name: "cluster_longitudinal"
+    title: "Cluster longitudinal moment;Longitudinal Moment;Events"
+    x: {expr: "cluster_LONGITUDINAL", bins: 100, min: 0, max: 1}
+    kind: "H1"
+  - name: "cluster_lateral"
+    title: "Cluster lateral moment;Lateral Moment;Events"
+    x: {expr: "cluster_LATERAL", bins: 100, min: 0, max: 1}
+    kind: "H1"
+  - name: "cluster_ptd"
+    title: "Cluster PTD;PTD;Events"
+    x: {expr: "cluster_PTD", bins: 100, min: 0, max: 1}
+    kind: "H1"
+  - name: "cluster_isolation"
+    title: "Cluster isolation;Isolation;Events"
+    x: {expr: "cluster_ISOLATION", bins: 100, min: 0, max: 1}
+    kind: "H1"
+  - name: "cluster_e_lcw"
+    title: "Cluster energy in LCW;Energy [GeV];Events"
+    x: {expr: "clusterE_LCW", bins: 100, min: 0, max: 50}
+    kind: "H1"
+  - name: "cluster_e_truth"
+    title: "Cluster energy in Truth;Energy [GeV];Events"
+    x: {expr: "clusterE_Truth", bins: 100, min: 0, max: 50}
+    kind: "H1"
+  - name: "cluster_closestDeltaR"
+    title: "Cluster closest DeltaR to jet;#DeltaR;Events"
+    x: {expr: "cluster_closestDeltaR", bins: 100, min: 0, max: 1}
+    kind: "H1"
+
+  # 2d histograms of cluster energy vs truth energy
+  - name: "cluster_e_vs_truth"
+    title: "Cluster energy vs truth;E_{truth} [GeV];E_{reco} [GeV]"
+    x: {expr: "clusterE_Truth", bins: 50, min: 0, max: 50}
+    y: {expr: "clusterE", bins: 50, min: 0, max: 50}
+    kind: "H2"
+  - name: "cluster_e_ml_vs_truth"
+    title: "Cluster energy (ML) vs truth;E_{truth} [GeV];E_{reco}^{ML} [GeV]"
+    x: {expr: "clusterE_Truth", bins: 50, min: 0, max: 50}
+    y: {expr: "clusterE_ML", bins: 50, min: 0, max: 50}
+    kind: "H2"
+  #- name: "n_prim_vtx"
+  #  title: "Number of primary vertices;N_{PrimVtx};Events"
+  #  x: {expr: "nPrimVtx", bins: 50, min: 0, max: 50}
+  #  kind: "H1"
+  #- name: "avg_mu"
+  #  title: "Average interactions per bunch crossing;#mu;Events"
+  #  x: {expr: "avgMu", bins: 50, min: 0, max: 50}
+  #  kind: "H1"
+
+# response vs cluster kinematics
+# clusterE/clusterE_Truth is the energy response of the cluster
+response_histograms: &response_histograms
+  - name: "cluster_e_response"
+    title: "Cluster energy response;E_{reco}/E_{truth};Events"
+    x: {expr: "clusterE/clusterE_Truth", bins: 100, min: 0, max: 6}
+    kind: "H1"
+
+  # mean of the cluster response vs cluster truth energy
+  - name: "cluster_e_response_vs_truth"
+    title: "Mean cluster energy response vs truth;E_{truth} [GeV];<E_{reco}/E_{truth}>"
+    x: {expr: "clusterE_Truth", bins: 50, min: 0, max: 50}
+    y: {expr: "clusterE/clusterE_Truth", kind: "MEAN"}
+    kind: "H2"
+  # IQR of the cluster response vs cluster truth energy
+  - name: "cluster_e_response_iqr_vs_truth"
+    title: "IQR of cluster energy response vs truth;E_{truth} [GeV];IQR(E_{reco}/E_{truth})"
+    x: {expr: "clusterE_Truth", bins: 50, min: 0, max: 50}
+    y: {expr: "clusterE/clusterE_Truth", kind: "IQR"}
+    kind: "H2"
+
+
+  # mean of the cluster response vs isolation
+  - name: "cluster_e_response_vs_isolation"
+    title: "Mean cluster energy response vs isolation;Isolation;Mean(E_{reco}/E_{truth})"
+    x: {expr: "cluster_ISOLATION", bins: 50, min: 0, max: 1}
+    y: {expr: "clusterE/clusterE_Truth", kind: "MEAN"}
+    kind: "H2"
+  # IQR of the cluster response vs isolation
+  - name: "cluster_e_response_iqr_vs_isolation"
+    title: "IQR of cluster energy response vs isolation;Isolation;IQR(E_{reco}/E_{truth})"
+    x: {expr: "cluster_ISOLATION", bins: 50, min: 0, max: 1}
+    y: {expr: "clusterE/clusterE_Truth", kind: "IQR"}
+    kind: "H2"
+
+  # mean of the cluster response vs cluster eta
+  - name: "cluster_e_response_vs_eta"
+    title: "Mean cluster energy response vs eta;#eta;Mean(E_{reco}/E_{truth})"
+    x: {expr: "clusterEta", bins: 50, min: -5, max: 5}
+    y: {expr: "clusterE/clusterE_Truth", kind: "MEAN"}
+    kind: "H2"
+  # IQR of the cluster response vs cluster eta
+  - name: "cluster_e_response_iqr_vs_eta"
+    title: "IQR of cluster energy response vs eta;#eta;IQR(E_{reco}/E_{truth})"
+    x: {expr: "clusterEta", bins: 50, min: -5, max: 5}
+    y: {expr: "clusterE/clusterE_Truth", kind: "IQR"}
+    kind: "H2"
+  # mean of the cluster response vs cluster time
+  - name: "cluster_e_response_vs_time"
+    title: "Mean cluster energy response vs time;Time [ns];Mean(E_{reco}/E_{truth})"
+    x: {expr: "cluster_time", bins: 100, min: -10, max: 10}
+    y: {expr: "clusterE/clusterE_Truth", kind: "MEAN"}
+    kind: "H2"
+  # IQR of the cluster response vs cluster time
+  - name: "cluster_e_response_iqr_vs_time"
+    title: "IQR of cluster energy response vs time;Time [ns];IQR(E_{reco}/E_{truth})"
+    x: {expr: "cluster_time", bins: 100, min: -10, max: 10}
+    y: {expr: "clusterE/clusterE_Truth", kind: "IQR"}
+    kind: "H2"
+  # mean of the cluster response vs eng frac em incl
+  - name: "cluster_e_response_vs_eng_frac_em_incl"
+    title: "Mean cluster energy response vs EM energy fraction;EM Energy Fraction;Mean(E_{reco}/E_{truth})"
+    x: {expr: "cluster_ENG_FRAC_EM_INCL", bins: 100, min: 0, max: 1}
+    y: {expr: "clusterE/clusterE_Truth", kind: "MEAN"}
+    kind: "H2"
+  # IQR of the cluster response vs eng frac em incl
+  - name: "cluster_e_response_iqr_vs_eng_frac_em_incl"
+    title: "IQR of cluster energy response vs EM energy fraction;EM Energy Fraction;IQR(E_{reco}/E_{truth})"
+    x: {expr: "cluster_ENG_FRAC_EM_INCL", bins: 100, min: 0, max: 1}
+    y: {expr: "clusterE/clusterE_Truth", kind: "IQR"}
+    kind: "H2"
+  # mean of the cluster response vs closestDeltaR
+  - name: "cluster_e_response_vs_closestDeltaR"
+    title: "Mean cluster energy response vs closest DeltaR to jet;#DeltaR;Mean(E_{reco}/E_{truth})"
+    x: {expr: "cluster_closestDeltaR", bins: 100, min: 0, max: 1}
+    y: {expr: "clusterE/clusterE_Truth", kind: "MEAN"}
+    kind: "H2"
+  # IQR of the cluster response vs closestDeltaR
+  - name: "cluster_e_response_iqr_vs_closestDeltaR"
+    title: "IQR of cluster energy response vs closest DeltaR to jet;#DeltaR;IQR(E_{reco}/E_{truth})"
+    x: {expr: "cluster_closestDeltaR", bins: 100, min: 0, max: 1}
+    y: {expr: "clusterE/clusterE_Truth", kind: "IQR"}
+    kind: "H2"
+
+  # calculate mean and iqr of cluster response (clusterE_ML/clusterE_Truth) vs various variables as well
+  - name: "cluster_e_ml_response"
+    title: "Cluster energy (ML) response;E_{reco}^{ML}/E_{truth};Events"
+    x: {expr: "clusterE_ML/clusterE_Truth", bins: 100, min: 0, max: 6}
+    kind: "H1"
+  - name: "cluster_e_ml_response_vs_truth"
+    title: "Mean cluster energy (ML) response vs truth;E_{truth} [GeV];<E_{reco}^{ML}/E_{truth}>"
+    x: {expr: "clusterE_Truth", bins: 50, min: 0, max: 50}
+    y: {expr: "clusterE_ML/clusterE_Truth", kind: "MEAN"}
+    kind: "H2"
+  - name: "cluster_e_ml_response_iqr_vs_truth"
+    title: "IQR of cluster energy (ML) response vs truth;E_{truth} [GeV];IQR(E_{reco}^{ML}/E_{truth})"
+    x: {expr: "clusterE_Truth", bins: 50, min: 0, max: 50}
+    y: {expr: "clusterE_ML/clusterE_Truth", kind: "IQR"}
+    kind: "H2"
+  - name: "cluster_e_ml_response_vs_isolation"
+    title: "Mean cluster energy (ML) response vs isolation;Isolation;Mean(E_{reco}^{ML}/E_{truth})"
+    x: {expr: "cluster_ISOLATION", bins: 50, min: 0, max: 1}
+    y: {expr: "clusterE_ML/clusterE_Truth", kind: "MEAN"}
+    kind: "H2"
+  - name: "cluster_e_ml_response_iqr_vs_isolation"
+    title: "IQR of cluster energy (ML) response vs isolation;Isolation;IQR(E_{reco}^{ML}/E_{truth})"
+    x: {expr: "cluster_ISOLATION", bins: 50, min: 0, max: 1}
+    y: {expr: "clusterE_ML/clusterE_Truth", kind: "IQR"}
+    kind: "H2"
+  - name: "cluster_e_ml_response_vs_eta"
+    title: "Mean cluster energy (ML) response vs eta;#eta;Mean(E_{reco}^{ML}/E_{truth})"
+    x: {expr: "clusterEta", bins: 50, min: -5, max: 5}
+    y: {expr: "clusterE_ML/clusterE_Truth", kind: "MEAN"}
+    kind: "H2"
+  - name: "cluster_e_ml_response_iqr_vs_eta"
+    title: "IQR of cluster energy (ML) response vs eta;#eta;IQR(E_{reco}^{ML}/E_{truth})"
+    x: {expr: "clusterEta", bins: 50, min: -5, max: 5}
+    y: {expr: "clusterE_ML/clusterE_Truth", kind: "IQR"}
+    kind: "H2"
+  - name: "cluster_e_ml_response_vs_time"
+    title: "Mean cluster energy (ML) response vs time;Time [ns];Mean(E_{reco}^{ML}/E_{truth})"
+    x: {expr: "cluster_time", bins: 100, min: -10, max: 10}
+    y: {expr: "clusterE_ML/clusterE_Truth", kind: "MEAN"}
+    kind: "H2"
+  - name: "cluster_e_ml_response_iqr_vs_time"
+    title: "IQR of cluster energy (ML) response vs time;Time [ns];IQR(E_{reco}^{ML}/E_{truth})"
+    x: {expr: "cluster_time", bins: 100, min: -10, max: 10}
+    y: {expr: "clusterE_ML/clusterE_Truth", kind: "IQR"}
+    kind: "H2"
+  - name: "cluster_e_ml_response_vs_eng_frac_em_incl"
+    title: "Mean cluster energy (ML) response vs EM energy fraction;EM Energy Fraction;Mean(E_{reco}^{ML}/E_{truth})"
+    x: {expr: "cluster_ENG_FRAC_EM_INCL", bins: 100, min: 0, max: 1}
+    y: {expr: "clusterE_ML/clusterE_Truth", kind: "MEAN"}
+    kind: "H2"
+  - name: "cluster_e_ml_response_iqr_vs_eng_frac_em_incl"
+    title: "IQR of cluster energy (ML) response vs EM energy fraction;EM Energy Fraction;IQR(E_{reco}^{ML}/E_{truth})"
+    x: {expr: "cluster_ENG_FRAC_EM_INCL", bins: 100, min: 0, max: 1}
+    y: {expr: "clusterE_ML/clusterE_Truth", kind: "IQR"}
+    kind: "H2"
+  - name: "cluster_e_ml_response_vs_closestDeltaR"
+    title: "Mean cluster energy (ML) response vs closest DeltaR to jet;#DeltaR;Mean(E_{reco}^{ML}/E_{truth})"
+    x: {expr: "cluster_closestDeltaR", bins: 100, min: 0, max: 1}
+    y: {expr: "clusterE_ML/clusterE_Truth", kind: "MEAN"}
+    kind: "H2"
+  - name: "cluster_e_ml_response_iqr_vs_closestDeltaR"
+    title: "IQR of cluster energy (ML) response vs closest DeltaR to jet;#DeltaR;IQR(E_{reco}^{ML}/E_{truth})"
+    x: {expr: "cluster_closestDeltaR", bins: 100, min: 0, max: 1}
+    y: {expr: "clusterE_ML/clusterE_Truth", kind: "IQR"}
+    kind: "H2"
+
+additional_histograms: &additional_histograms
+  # response and iqr vs nPrimVtx and avgMu
+  - name: "cluster_e_response_vs_nPrimVtx"
+    title: "Mean cluster energy response vs N_{PrimVtx};N_{PrimVtx};Mean(E_{reco}/E_{truth})"
+    x: {expr: "nPrimVtx", bins: 50, min: 0, max: 50}
+    y: {expr: "clusterE/clusterE_Truth", kind: "MEAN"}
+    kind: "H2"
+  - name: "cluster_e_response_iqr_vs_nPrimVtx"
+    title: "IQR of cluster energy response vs N_{PrimVtx};N_{PrimVtx};IQR(E_{reco}/E_{truth})"
+    x: {expr: "nPrimVtx", bins: 50, min: 0, max: 50}
+    y: {expr: "clusterE/clusterE_Truth", kind: "IQR"}
+    kind: "H2"
+
+
+outputs:
+  #- file: "./output-root-files/cluster_moments_tree2hist_jz02_withPU.root"
+  #- file: "./output-root-files/cluster_moments_tree2hist_jz02_noPU.root"
+  #- file: "./output-root-files/cluster_moments_tree2hist_zmumu_withPU.root"
+  - file: "./output-root-files/cluster_moments_tree2hist_jz02_PU_mc20a_mc20e.root"
+    selections:
+      - tree: "ClusterMoments_InJet"
+        dir: "cluster_moments/in_jet"
+        hists: *response_histograms
+      - tree: "ClusterMoments_OutJet"
+        dir: "cluster_moments/out_jet"
+        hists: *response_histograms
+      - tree: "ClusterMoments_InJet"
+        filter: "cluster_ISOLATION > 0.8"
+        dir: "cluster_moments/in_jet_filtered"
+        hists: *cluster_histograms
+      - tree: "ClusterMoments_OutJet"
+        filter: "cluster_ISOLATION > 0.8"
+        dir: "cluster_moments/out_jet_filtered"
+        hists: *cluster_histograms
+      - tree: "ClusterMoments_All"
+        dir: "cluster_moments/all_clusters"
+        hists: *cluster_histograms
+
+
